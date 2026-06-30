@@ -1,0 +1,167 @@
+// Hand-authored, internally-coherent fake fleets. No real project names. Each
+// scenario is a complete world: board sessions, backlog rows, territory data
+// (derived from sessions' globs), and the cross-repo `repos` list. The engine
+// mutates a CLONE of one of these; Randomize swaps which one is active.
+
+export const SCENARIOS = [
+  // ── Scenario 1 ── web app with active auth + billing work ──
+  {
+    repoId: 'acme-web',
+    cwd: '~/code/acme-web',
+    self: 'sesh-7a',
+    enabled: true,
+    guard: { enabled: false, paths: [] },
+    ls: ['src/', 'public/', 'package.json', 'README.md', 'vite.config.js'],
+    sessions: [
+      {
+        session_id: 'sesh-12',
+        liveness: 'active',
+        branch: 'feat/auth-passkeys',
+        dirty: true,
+        touched_globs: ['src/auth/session.ts', 'src/auth/passkey.ts'],
+        claimed_globs: ['src/auth/**'],
+        handoff: 'fresh 8m ago',
+        ctxPct: 62,
+        claimed_row: 'A3',
+        tmux: '%4',
+      },
+      {
+        session_id: 'sesh-19',
+        liveness: 'active',
+        branch: 'feat/billing-credits',
+        dirty: true,
+        touched_globs: ['src/billing/plans.ts', 'src/billing/webhook.ts'],
+        claimed_globs: ['src/billing/**'],
+        handoff: 'fresh 12m ago',
+        ctxPct: 44,
+        claimed_row: 'A7',
+        tmux: '%5',
+      },
+      {
+        session_id: 'sesh-03',
+        liveness: 'idle',
+        branch: 'chore/editor-cleanup',
+        dirty: false,
+        touched_globs: ['src/editor/timeline.ts'],
+        claimed_globs: ['src/editor/**'],
+        handoff: 'aging 2h ago',
+        ctxPct: 18,
+        claimed_row: null,
+        tmux: null,
+      },
+    ],
+    rows: [
+      { id: 'A3', status: '🟡', mission: 'passkey login', holders: ['sesh-12'], drift: 'none' },
+      { id: 'A7', status: '🟡', mission: 'per-channel credits', holders: ['sesh-19'], drift: 'none' },
+      { id: 'A9', status: '🟡', mission: 'render queue', holders: [], drift: 'stale-open' },
+    ],
+    repos: [
+      { repoId: 'acme-web', sessions: 3, last: '8m ago' },
+      { repoId: 'mkdocs-site', sessions: 1, last: '1h ago' },
+      { repoId: 'ml-pipeline', sessions: 2, last: '21m ago' },
+    ],
+  },
+
+  // ── Scenario 2 ── docs site with two sessions on API reference ──
+  {
+    repoId: 'mkdocs-site',
+    cwd: '~/code/mkdocs-site',
+    self: 'sesh-22',
+    enabled: true,
+    guard: { enabled: false, paths: [] },
+    ls: ['docs/', 'mkdocs.yml', 'requirements.txt', 'README.md', '.github/'],
+    sessions: [
+      {
+        session_id: 'sesh-22',
+        liveness: 'active',
+        branch: 'feat/api-reference',
+        dirty: true,
+        touched_globs: ['docs/api/endpoints.md', 'docs/api/auth.md'],
+        claimed_globs: ['docs/api/**'],
+        handoff: 'fresh 5m ago',
+        ctxPct: 35,
+        claimed_row: 'D1',
+        tmux: '%2',
+      },
+      {
+        session_id: 'sesh-41',
+        liveness: 'idle',
+        branch: 'chore/nav-cleanup',
+        dirty: false,
+        touched_globs: ['mkdocs.yml', 'docs/index.md'],
+        claimed_globs: ['docs/index.md', 'mkdocs.yml'],
+        handoff: 'aging 1h ago',
+        ctxPct: 8,
+        claimed_row: null,
+        tmux: null,
+      },
+    ],
+    rows: [
+      { id: 'D1', status: '🟡', mission: 'API reference docs', holders: ['sesh-22'], drift: 'none' },
+      { id: 'D2', status: '🟡', mission: 'search integration', holders: [], drift: 'stale-open' },
+    ],
+    repos: [
+      { repoId: 'acme-web', sessions: 3, last: '8m ago' },
+      { repoId: 'mkdocs-site', sessions: 1, last: '1h ago' },
+      { repoId: 'ml-pipeline', sessions: 2, last: '21m ago' },
+    ],
+  },
+
+  // ── Scenario 3 ── ML repo with a dead holder → orphaned backlog row ──
+  {
+    repoId: 'ml-pipeline',
+    cwd: '~/code/ml-pipeline',
+    self: 'sesh-31',
+    enabled: true,
+    guard: { enabled: true, paths: ['data/loader.py'] },
+    ls: ['pipelines/', 'data/', 'models/', 'configs/', 'requirements.txt', 'README.md'],
+    sessions: [
+      {
+        session_id: 'sesh-31',
+        liveness: 'active',
+        branch: 'feat/distributed-training',
+        dirty: true,
+        touched_globs: ['pipelines/train.py', 'configs/distributed.yaml'],
+        claimed_globs: ['pipelines/**', 'configs/**'],
+        handoff: 'fresh 21m ago',
+        ctxPct: 71,
+        claimed_row: 'M1',
+        tmux: '%1',
+      },
+      {
+        session_id: 'sesh-47',
+        liveness: 'dead',
+        branch: 'feat/data-loader-v2',
+        dirty: false,
+        touched_globs: ['data/loader.py', 'data/transforms.py'],
+        claimed_globs: ['data/**'],
+        handoff: 'stale 3h ago',
+        ctxPct: null,
+        claimed_row: 'M3',
+        tmux: null,
+      },
+      {
+        session_id: 'sesh-55',
+        liveness: 'active',
+        branch: 'fix/eval-metrics',
+        dirty: true,
+        touched_globs: ['pipelines/eval.py', 'models/metrics.py'],
+        claimed_globs: ['pipelines/eval.py', 'models/**'],
+        handoff: 'fresh 4m ago',
+        ctxPct: 29,
+        claimed_row: null,
+        tmux: '%3',
+      },
+    ],
+    rows: [
+      { id: 'M1', status: '🟡', mission: 'distributed training', holders: ['sesh-31'], drift: 'none' },
+      { id: 'M2', status: '⬜', mission: 'benchmark suite', holders: [], drift: 'none' },
+      { id: 'M3', status: '🟡', mission: 'data loader v2', holders: ['sesh-47'], drift: 'orphaned' },
+    ],
+    repos: [
+      { repoId: 'acme-web', sessions: 3, last: '8m ago' },
+      { repoId: 'mkdocs-site', sessions: 1, last: '1h ago' },
+      { repoId: 'ml-pipeline', sessions: 2, last: '21m ago' },
+    ],
+  },
+]
