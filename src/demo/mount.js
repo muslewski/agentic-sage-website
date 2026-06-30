@@ -113,6 +113,7 @@ export function mountDemo(root) {
     el.addEventListener('click', () => {
       const cmd = el.getAttribute('data-run')
       input.value = ''
+      out.innerHTML = '' // picking from the buttons clears the terminal — keep it clean (typed input still appends)
       exec(cmd)
       term.classList.remove('demo-pulse'); void term.offsetWidth; term.classList.add('demo-pulse')
       input.focus()
