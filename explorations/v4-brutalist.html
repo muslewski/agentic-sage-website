@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAGE — I don't do the work. I judge it.</title>
+  <meta name="description" content="SAGE: Session Awareness & Guidance Engine. A passive, read-only judge for fleets of parallel AI coding sessions. One judge per repo.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream:      '#F4EFE6',
+            'cream-d':  '#EFE7D8',
+            'cream-l':  '#FBF8F2',
+            ink:        '#1A1714',
+            gold:       '#C8972F',
+            'gold-dim': '#B8862F',
+            olive:      '#6B7A3A',
+          },
+          fontFamily: {
+            display: ['Anton', 'sans-serif'],
+            heading: ['"Archivo Black"', 'sans-serif'],
+            body:    ['Inter', 'sans-serif'],
+            mono:    ['"JetBrains Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #F4EFE6;
+      color: #1A1714;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── TYPOGRAPHY ─────────────────────────────────────────────── */
+    .wordmark {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(5.5rem, 23vw, 24rem);
+      line-height: 0.82;
+      letter-spacing: -0.01em;
+      color: #1A1714;
+    }
+    .hero-tagline {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(1.6rem, 4.2vw, 3.75rem);
+      line-height: 1.05;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+    }
+    .section-title {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(1.75rem, 3.5vw, 3.25rem);
+      line-height: 1.08;
+      text-transform: uppercase;
+      letter-spacing: -0.015em;
+    }
+    .big-num {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(8rem, 18vw, 16rem);
+      line-height: 0.88;
+      color: #C8972F;
+    }
+    .step-num {
+      font-family: 'Anton', sans-serif;
+      font-size: 5.5rem;
+      line-height: 1;
+      color: #C8972F;
+      opacity: 0.22;
+      user-select: none;
+    }
+
+    /* ── BORDER & SHADOW UTILITIES ──────────────────────────────── */
+    .bdr   { border: 4px solid #1A1714; }
+    .bdr-3 { border: 3px solid #1A1714; }
+    .bdr-5 { border: 5px solid #1A1714; }
+    .bdr-gold-3 { border: 3px solid #C8972F; }
+
+    .sh        { box-shadow: 8px 8px 0 #1A1714; }
+    .sh-sm     { box-shadow: 5px 5px 0 #1A1714; }
+    .sh-gold   { box-shadow: 8px 8px 0 #C8972F; }
+    .sh-gold-sm{ box-shadow: 5px 5px 0 #C8972F; }
+    .sh-cream  { box-shadow: 6px 6px 0 #F4EFE6; }
+
+    /* ── BUTTONS ────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #1A1714;
+      color: #F4EFE6;
+      border: 4px solid #1A1714;
+      box-shadow: 6px 6px 0 #C8972F;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.875rem 1.75rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.07s linear, box-shadow 0.07s linear;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0 #C8972F;
+    }
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 4px 4px 0 #C8972F;
+    }
+
+    /* ── CMD COPY BLOCK ─────────────────────────────────────────── */
+    .cmd-block {
+      display: inline-flex;
+      align-items: stretch;
+      border: 4px solid #1A1714;
+      box-shadow: 6px 6px 0 #1A1714;
+      background: #EFE7D8;
+    }
+    .cmd-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 0.875rem 1rem;
+      color: #1A1714;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      flex: 1;
+    }
+    .cmd-btn {
+      flex-shrink: 0;
+      background: #1A1714;
+      color: #C8972F;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 0.875rem 1.1rem;
+      border: none;
+      border-left: 4px solid #1A1714;
+      cursor: pointer;
+      transition: background 0.05s steps(1, end), color 0.05s steps(1, end);
+    }
+    .cmd-btn:hover   { background: #C8972F; color: #1A1714; }
+    .cmd-btn.copied  { background: #6B7A3A; color: #F4EFE6; }
+
+    /* ── SECTION LABEL TAGS ─────────────────────────────────────── */
+    .tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: #C8972F;
+      color: #1A1714;
+      padding: 0.3rem 0.8rem;
+      border: 3px solid #1A1714;
+    }
+    .tag-inv {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: #F4EFE6;
+      color: #1A1714;
+      padding: 0.3rem 0.8rem;
+      border: 3px solid #F4EFE6;
+    }
+    .tag-outline {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #C8972F;
+      padding: 0.3rem 0.8rem;
+      border: 3px solid #C8972F;
+    }
+    .tag-ink {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      background: #1A1714;
+      color: #F4EFE6;
+      padding: 0.3rem 0.8rem;
+      border: 3px solid #1A1714;
+    }
+
+    /* ── MARQUEE ────────────────────────────────────────────────── */
+    .marquee-wrap {
+      overflow: hidden;
+      background: #C8972F;
+      border-top: 4px solid #1A1714;
+      border-bottom: 4px solid #1A1714;
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: scroll-left 26s linear infinite;
+    }
+    .marquee-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #1A1714;
+      padding: 0.8rem 1.6rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .marquee-sep {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: #1A1714;
+      opacity: 0.4;
+      padding: 0.8rem 0.4rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+    @keyframes scroll-left {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── PILLAR CARDS ───────────────────────────────────────────── */
+    .pillar-card {
+      background: #F4EFE6;
+      border: 4px solid #F4EFE6;
+      box-shadow: 6px 6px 0 #C8972F;
+      padding: 1.75rem;
+      transition:
+        background 0.06s steps(1, end),
+        color       0.06s steps(1, end),
+        transform   0.08s linear,
+        box-shadow  0.08s linear;
+      cursor: default;
+    }
+    .pillar-card:hover {
+      background: #C8972F;
+      color: #1A1714;
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0 #F4EFE6;
+    }
+    .pillar-card .p-icon { color: #C8972F; transition: color 0.06s steps(1, end); }
+    .pillar-card:hover .p-icon { color: #1A1714; }
+    .pillar-card .p-code { background: #1A1714; color: #C8972F; padding: 0.1rem 0.35rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; transition: background 0.06s steps(1, end), color 0.06s steps(1, end); }
+    .pillar-card:hover .p-code { background: #1A1714; color: #F4EFE6; }
+
+    /* ── TERMINAL ───────────────────────────────────────────────── */
+    .terminal-wrap {
+      background: #1A1714;
+      border: 4px solid #1A1714;
+      box-shadow: 10px 10px 0 #C8972F;
+      overflow: hidden;
+    }
+    .term-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+      border-bottom: 3px solid rgba(248,239,230,0.1);
+      background: #1A1714;
+    }
+    .term-dots { display: flex; gap: 0.5rem; }
+    .term-dot-g { width: 12px; height: 12px; background: #C8972F; }
+    .term-dot-y { width: 12px; height: 12px; background: rgba(248,239,230,0.2); }
+    .term-dot-r { width: 12px; height: 12px; background: rgba(248,239,230,0.2); }
+    .term-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(248,239,230,0.25); }
+    .term-body { padding: 2rem 1.75rem; display: flex; flex-direction: column; gap: 1.1rem; }
+    .term-line { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+    .term-ps  { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; color: #C8972F; flex-shrink: 0; }
+    .term-cmd { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #F4EFE6; flex-shrink: 0; }
+    .term-cmt { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #6B7A3A; font-style: italic; }
+
+    /* ── STEP CARDS ─────────────────────────────────────────────── */
+    .step-card {
+      background: #F4EFE6;
+      border: 4px solid #1A1714;
+      padding: 1.5rem 1.5rem 1.75rem;
+      box-shadow: none;
+    }
+
+    /* ── HARD RULE ──────────────────────────────────────────────── */
+    .hr { height: 4px; background: #1A1714; border: none; }
+    .hr-cream { height: 4px; background: rgba(248,239,230,0.15); border: none; }
+
+    /* ── MASCOT FRAME ───────────────────────────────────────────── */
+    .mascot-frame {
+      border: 5px solid #1A1714;
+      box-shadow: 10px 10px 0 #1A1714;
+      overflow: hidden;
+      display: block;
+    }
+    .mascot-caption {
+      background: #1A1714;
+      color: #C8972F;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      padding: 0.5rem 1rem;
+      border-top: none;
+    }
+
+    /* ── SCROLL REVEAL ──────────────────────────────────────────── */
+    .rv    { opacity: 0; transform: translateY(28px); }
+    .rv-l  { opacity: 0; transform: translateX(-40px); }
+    .rv-r  { opacity: 0; transform: translateX(40px); }
+
+    .rv.on    { opacity: 1; transform: translateY(0);  transition: opacity 0.22s linear, transform 0.2s steps(5, end); }
+    .rv-l.on  { opacity: 1; transform: translateX(0); transition: opacity 0.18s linear, transform 0.18s steps(4, end); }
+    .rv-r.on  { opacity: 1; transform: translateX(0); transition: opacity 0.18s linear, transform 0.18s steps(4, end); }
+
+    /* Stagger helpers */
+    .d1 { transition-delay: 0.04s; }
+    .d2 { transition-delay: 0.08s; }
+    .d3 { transition-delay: 0.12s; }
+    .d4 { transition-delay: 0.16s; }
+    .d5 { transition-delay: 0.20s; }
+
+    /* ── HERO ENTRANCE ──────────────────────────────────────────── */
+    .he-0 { animation: he-snap 0.35s steps(5, end) both 0.00s; }
+    .he-1 { animation: he-snap 0.35s steps(5, end) both 0.07s; }
+    .he-2 { animation: he-snap 0.35s steps(5, end) both 0.14s; }
+    .he-3 { animation: he-snap 0.35s steps(5, end) both 0.21s; }
+    @keyframes he-snap {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── REDUCED MOTION ─────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none; }
+      .he-0, .he-1, .he-2, .he-3 { animation: none; opacity: 1; transform: none; }
+      .rv, .rv-l, .rv-r {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
+    /* ── MISC ───────────────────────────────────────────────────── */
+    code { font-family: 'JetBrains Mono', monospace; }
+    img  { display: block; max-width: 100%; height: auto; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  NAV                                                         ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <nav class="sticky top-0 z-50 flex items-center justify-between bg-cream border-b-4 border-ink px-6 md:px-12 py-4">
+    <div class="flex items-center gap-3">
+      <span class="font-display text-2xl text-ink leading-none">SAGE</span>
+      <span class="hidden sm:block font-mono text-xs font-bold uppercase tracking-[0.15em] text-gold opacity-80">/&nbsp;Session Awareness &amp; Guidance Engine</span>
+    </div>
+    <a href="https://github.com/muslewski/agentic-sage"
+       target="_blank" rel="noopener noreferrer"
+       class="btn text-sm py-2 px-5">
+      GitHub ↗
+    </a>
+  </nav>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  HERO                                                        ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <section class="bg-cream border-b-4 border-ink px-6 md:px-12 pt-10 pb-16 overflow-hidden">
+
+    <!-- Label -->
+    <div class="he-0 mb-5">
+      <span class="tag">Zero-dep Node CLI</span>
+    </div>
+
+    <!-- Wordmark -->
+    <div class="he-1">
+      <h1 class="wordmark" aria-label="SAGE">SAGE</h1>
+    </div>
+
+    <!-- Expansion -->
+    <div class="he-2 mt-3 mb-10">
+      <span class="font-mono text-xs md:text-sm uppercase tracking-[0.28em] text-ink" style="opacity:0.45;">
+        Session Awareness &amp; Guidance Engine
+      </span>
+    </div>
+
+    <!-- Tagline + body/CTAs row -->
+    <div class="he-3 flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-14">
+
+      <!-- Tagline slab -->
+      <div class="flex-shrink-0">
+        <div class="inline-block bg-ink text-cream bdr-5 sh-gold px-7 py-6 md:px-10 md:py-8">
+          <p class="hero-tagline">I don't do<br>the work.<br>I judge it.</p>
+        </div>
+      </div>
+
+      <!-- Body + CTAs -->
+      <div class="flex flex-col justify-start pt-0 lg:pt-3 max-w-xl">
+        <p class="text-lg md:text-xl leading-relaxed text-ink mb-8" style="opacity:0.85;">
+          A passive, read-only judge for fleets of parallel AI coding sessions.
+          <strong>One judge per repo.</strong>
+        </p>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-start">
+          <a href="https://github.com/muslewski/agentic-sage"
+             target="_blank" rel="noopener noreferrer"
+             class="btn">
+            View on GitHub ↗
+          </a>
+          <div class="cmd-block max-w-sm w-full sm:w-auto flex-1">
+            <span class="cmd-text">git clone https://github.com/muslewski/agentic-sage</span>
+            <button class="cmd-btn" onclick="copyCmd(this,'git clone https://github.com/muslewski/agentic-sage')" aria-label="Copy clone command">
+              COPY
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Version watermark -->
+    <div class="text-right mt-10">
+      <span class="font-mono text-xs uppercase tracking-widest text-ink" style="opacity:0.18;">
+        v1 &middot; MIT License
+      </span>
+    </div>
+
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  MARQUEE STRIP                                               ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <div class="marquee-wrap" aria-hidden="true" role="presentation">
+    <div class="marquee-track">
+      <!-- Set A -->
+      <span class="marquee-item">PASSIVE</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">READ-ONLY</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">ZERO-DEP</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">ONE JUDGE PER REPO</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">DEFAULT-OFF</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">FAIL-OPEN</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">HOT-PATH-CHEAP</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">ADVISOR NOT A BOSS</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">JUST THE TRUTH</span><span class="marquee-sep">•</span>
+      <!-- Set B (duplicate for seamless loop) -->
+      <span class="marquee-item">PASSIVE</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">READ-ONLY</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">ZERO-DEP</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">ONE JUDGE PER REPO</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">DEFAULT-OFF</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">FAIL-OPEN</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">HOT-PATH-CHEAP</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">ADVISOR NOT A BOSS</span><span class="marquee-sep">•</span>
+      <span class="marquee-item">JUST THE TRUTH</span><span class="marquee-sep">•</span>
+    </div>
+  </div>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  SECTION 2 — THE PROBLEM                                     ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <section class="bg-ink border-b-4 border-ink py-16 md:py-24 px-6 md:px-12">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-16">
+
+        <!-- Giant "8" -->
+        <div class="rv-l flex-shrink-0">
+          <p class="big-num leading-none select-none" aria-hidden="true">8</p>
+          <p class="font-mono text-xs font-bold uppercase tracking-[0.2em] mt-3" style="color:#C8972F; opacity:0.55;">
+            agents &middot; one repo
+          </p>
+        </div>
+
+        <!-- Text -->
+        <div class="rv flex-1 lg:pt-2">
+          <div class="mb-5"><span class="tag-inv">The Problem</span></div>
+          <h2 class="section-title text-cream mb-6">
+            Eight agents,<br>one repo,<br>zero coordination.
+          </h2>
+          <p class="text-base md:text-lg leading-relaxed max-w-2xl mb-10" style="color:rgba(244,239,230,0.72);">
+            Run a fleet of coding agents at once and they collide — same files, duplicated work,
+            lost context across sessions, no shared source of truth.
+            <span class="font-semibold text-gold">Nobody is watching the fleet as a whole.</span>
+          </p>
+
+          <!-- Problem tags -->
+          <div class="flex flex-wrap gap-3">
+            <span class="tag-outline">Same files</span>
+            <span class="tag-outline">Duplicated work</span>
+            <span class="tag-outline">Lost context</span>
+            <span class="tag-outline">No source of truth</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  SECTION 3 — WHAT SAGE IS                                    ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <section class="bg-cream border-b-4 border-ink py-16 md:py-24 px-6 md:px-12">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+
+        <!-- Text -->
+        <div class="rv flex-1">
+          <div class="mb-5"><span class="tag">What SAGE is</span></div>
+          <h2 class="section-title mb-6">
+            A judge,<br>not a boss.
+          </h2>
+          <p class="text-base md:text-lg leading-relaxed max-w-lg mb-5" style="opacity:0.8;">
+            SAGE sits beside your fleet and watches every session. Ask it anything — who's touching what,
+            where two branches diverged, what the backlog says — and it answers.
+          </p>
+          <p class="text-base md:text-lg leading-relaxed max-w-lg" style="opacity:0.8;">
+            It never edits your code, never spawns agents, never blocks an action.
+            Passive by design.
+            <em class="not-italic font-semibold text-ink">Advisor, not a boss — just the truth.</em>
+          </p>
+
+          <!-- Guarantee list -->
+          <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+            <div class="bdr-3 bg-cream-d sh-sm flex items-center gap-3 px-4 py-3">
+              <span class="font-mono font-bold text-olive text-base flex-shrink-0">✓</span>
+              <span class="font-mono text-xs font-bold uppercase tracking-wider">Never edits code</span>
+            </div>
+            <div class="bdr-3 bg-cream-d sh-sm flex items-center gap-3 px-4 py-3">
+              <span class="font-mono font-bold text-olive text-base flex-shrink-0">✓</span>
+              <span class="font-mono text-xs font-bold uppercase tracking-wider">Never spawns agents</span>
+            </div>
+            <div class="bdr-3 bg-cream-d sh-sm flex items-center gap-3 px-4 py-3">
+              <span class="font-mono font-bold text-olive text-base flex-shrink-0">✓</span>
+              <span class="font-mono text-xs font-bold uppercase tracking-wider">Never blocks actions</span>
+            </div>
+            <div class="bdr-3 bg-cream-d sh-sm flex items-center gap-3 px-4 py-3">
+              <span class="font-mono font-bold text-olive text-base flex-shrink-0">✓</span>
+              <span class="font-mono text-xs font-bold uppercase tracking-wider">Always read-only</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mascot image -->
+        <div class="rv-r flex-shrink-0 w-full lg:max-w-xs xl:max-w-sm">
+          <div class="mascot-frame">
+            <img
+              src="assets/sage-banner.png"
+              alt="SAGE mascot — a robed sage with sunglasses and staff standing on a cream background with the tagline: I don't do the work. I judge it."
+              style="width:100%; aspect-ratio:1774/887; object-fit:cover; object-position:center;"
+            >
+          </div>
+          <p class="mascot-caption">sage-mascot &middot; the judge</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  SECTION 4 — HOW IT WORKS                                    ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <section class="border-b-4 border-ink py-16 md:py-24 px-6 md:px-12" style="background:#C8972F;">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="rv mb-10">
+        <span class="tag-ink">How it works</span>
+        <h2 class="section-title mt-4">Four steps.<br>Then judge everything.</h2>
+      </div>
+
+      <!-- 4-step grid — standalone cards with gap, works at all breakpoints -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <div class="rv step-card sh d1">
+          <p class="step-num">01</p>
+          <h3 class="font-heading text-xl uppercase tracking-tight mb-2 mt-2">Clone</h3>
+          <p class="font-mono text-xs font-bold uppercase tracking-wider mb-4" style="opacity:0.5;">Get the code</p>
+          <div class="bg-ink text-cream px-3 py-2">
+            <code style="font-size:0.72rem; word-break:break-all; line-height:1.5;">git clone github.com/muslewski/agentic-sage</code>
+          </div>
+        </div>
+
+        <div class="rv step-card sh d2">
+          <p class="step-num">02</p>
+          <h3 class="font-heading text-xl uppercase tracking-tight mb-2 mt-2">Install</h3>
+          <p class="font-mono text-xs font-bold uppercase tracking-wider mb-4" style="opacity:0.5;">Wire the hook</p>
+          <div class="bg-ink text-cream px-3 py-2">
+            <code style="font-size:0.78rem;">node install.mjs</code>
+          </div>
+          <p class="font-mono text-xs mt-3" style="opacity:0.45;">Touches nothing else.</p>
+        </div>
+
+        <div class="rv step-card sh d3">
+          <p class="step-num">03</p>
+          <h3 class="font-heading text-xl uppercase tracking-tight mb-2 mt-2">Enable</h3>
+          <p class="font-mono text-xs font-bold uppercase tracking-wider mb-4" style="opacity:0.5;">Flip the switch</p>
+          <div class="px-3 py-2" style="background:#1A1714;">
+            <code style="font-size:0.78rem; color:#C8972F;">sage on</code>
+          </div>
+          <p class="font-mono text-xs mt-3" style="opacity:0.45;">Nothing runs until you do.</p>
+        </div>
+
+        <div class="rv step-card sh d4">
+          <p class="step-num">04</p>
+          <h3 class="font-heading text-xl uppercase tracking-tight mb-2 mt-2">Verify</h3>
+          <p class="font-mono text-xs font-bold uppercase tracking-wider mb-4" style="opacity:0.5;">Confirm setup</p>
+          <div class="px-3 py-2" style="background:#1A1714;">
+            <code style="font-size:0.78rem; color:#6B7A3A;">sage doctor</code>
+          </div>
+          <p class="font-mono text-xs mt-3" style="opacity:0.45;">Checks setup validity.</p>
+        </div>
+
+      </div>
+
+      <!-- Setup image -->
+      <div class="rv mt-8">
+        <div class="bdr-5 sh overflow-hidden">
+          <img
+            src="assets/sage-setup.png"
+            alt="SAGE setup walkthrough: four steps — Clone, Install, Enable, Doctor"
+            style="width:100%;"
+          >
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  SECTION 5 — PILLARS                                         ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <section class="bg-ink border-b-4 border-ink py-16 md:py-24 px-6 md:px-12">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="rv mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+        <div>
+          <span class="tag">Core Pillars</span>
+          <h2 class="section-title text-cream mt-4">Six rules.<br>Zero compromise.</h2>
+        </div>
+        <p class="font-mono text-xs uppercase tracking-widest hidden sm:block" style="color:rgba(244,239,230,0.3);">hover to invert</p>
+      </div>
+
+      <!-- 6 pillar cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- 1 -->
+        <div class="pillar-card rv d1">
+          <div class="p-icon mb-5">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </div>
+          <h3 class="font-heading text-lg uppercase tracking-tight mb-3">Passive by design</h3>
+          <p class="text-sm leading-relaxed" style="opacity:0.7;">
+            Watches and answers; never edits, spawns, or blocks.
+          </p>
+        </div>
+
+        <!-- 2 -->
+        <div class="pillar-card rv d2">
+          <div class="p-icon mb-5">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+              <rect x="3" y="11" width="18" height="11"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3 class="font-heading text-lg uppercase tracking-tight mb-3">Read-only &amp; safe</h3>
+          <p class="text-sm leading-relaxed" style="opacity:0.7;">
+            It cannot change your repo. Ever.
+          </p>
+        </div>
+
+        <!-- 3 -->
+        <div class="pillar-card rv d3">
+          <div class="p-icon mb-5">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <h3 class="font-heading text-lg uppercase tracking-tight mb-3">Zero-dependency</h3>
+          <p class="text-sm leading-relaxed" style="opacity:0.7;">
+            One Node CLI, no install bloat. Clone and run.
+          </p>
+        </div>
+
+        <!-- 4 -->
+        <div class="pillar-card rv d2">
+          <div class="p-icon mb-5">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="3"/>
+            </svg>
+          </div>
+          <h3 class="font-heading text-lg uppercase tracking-tight mb-3">Default-off</h3>
+          <p class="text-sm leading-relaxed" style="opacity:0.7;">
+            Installing changes nothing until <span class="p-code">sage on</span>.
+          </p>
+        </div>
+
+        <!-- 5 -->
+        <div class="pillar-card rv d3">
+          <div class="p-icon mb-5">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3 class="font-heading text-lg uppercase tracking-tight mb-3">Fail-open</h3>
+          <p class="text-sm leading-relaxed" style="opacity:0.7;">
+            Any error in the optional guard allows the action. Never in your way.
+          </p>
+        </div>
+
+        <!-- 6 -->
+        <div class="pillar-card rv d4">
+          <div class="p-icon mb-5">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <h3 class="font-heading text-lg uppercase tracking-tight mb-3">Hot-path-cheap</h3>
+          <p class="text-sm leading-relaxed" style="opacity:0.7;">
+            When idle the hook short-circuits instantly. Zero cost.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  SECTION 6 — TERMINAL PEEK                                   ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <section class="bg-cream border-b-4 border-ink py-16 md:py-24 px-6 md:px-12">
+    <div class="max-w-3xl mx-auto">
+
+      <div class="rv mb-10">
+        <span class="tag">A peek inside</span>
+        <h2 class="section-title mt-4">Ask it anything.</h2>
+        <p class="text-base md:text-lg mt-4 max-w-xl" style="opacity:0.7;">
+          Four commands. The whole fleet at a glance.
+        </p>
+      </div>
+
+      <!-- Terminal -->
+      <div class="rv terminal-wrap">
+        <!-- Bar -->
+        <div class="term-bar">
+          <div class="term-dots" aria-hidden="true">
+            <div class="term-dot-g"></div>
+            <div class="term-dot-y"></div>
+            <div class="term-dot-r"></div>
+          </div>
+          <span class="term-label">sage &middot; terminal</span>
+        </div>
+        <!-- Body -->
+        <div class="term-body">
+          <div class="term-line">
+            <span class="term-ps">$</span>
+            <span class="term-cmd">sage board</span>
+            <span class="term-cmt"># the whole fleet at a glance</span>
+          </div>
+          <div class="term-line">
+            <span class="term-ps">$</span>
+            <span class="term-cmd">sage territory</span>
+            <span class="term-cmt"># who's touching which files</span>
+          </div>
+          <div class="term-line">
+            <span class="term-ps">$</span>
+            <span class="term-cmd">sage backlog</span>
+            <span class="term-cmt"># what each session claimed</span>
+          </div>
+          <div class="term-line">
+            <span class="term-ps">$</span>
+            <span class="term-cmd">sage doctor</span>
+            <span class="term-cmt"># is my setup valid?</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  SECTION 7 — FINAL CTA + FOOTER                             ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <section class="bg-ink py-20 md:py-28 px-6 md:px-12">
+    <div class="max-w-3xl mx-auto text-center">
+
+      <div class="rv">
+        <span class="tag-inv inline-block mb-6">Open Source &middot; MIT</span>
+      </div>
+
+      <div class="rv d1">
+        <h2 class="section-title text-cream mb-4">
+          Bring a judge<br>to your fleet.
+        </h2>
+        <p class="text-base md:text-lg mb-10" style="color:rgba(244,239,230,0.55);">
+          One command. One judge. Zero interference.
+        </p>
+      </div>
+
+      <!-- Clone command -->
+      <div class="rv d2 flex justify-center mb-8">
+        <div class="cmd-block max-w-lg w-full" style="box-shadow:6px 6px 0 #C8972F;">
+          <span class="cmd-text">git clone https://github.com/muslewski/agentic-sage</span>
+          <button class="cmd-btn" onclick="copyCmd(this,'git clone https://github.com/muslewski/agentic-sage')" aria-label="Copy clone command">
+            COPY
+          </button>
+        </div>
+      </div>
+
+      <!-- CTA button -->
+      <div class="rv d3 flex justify-center">
+        <a href="https://github.com/muslewski/agentic-sage"
+           target="_blank" rel="noopener noreferrer"
+           class="btn text-lg py-4 px-10">
+          View on GitHub ↗
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Footer divider -->
+    <div class="hr-cream mt-16 md:mt-20"></div>
+
+    <!-- Footer text -->
+    <footer class="mt-8 text-center">
+      <p class="font-mono text-xs uppercase tracking-widest" style="color:rgba(244,239,230,0.3);">
+        SAGE &middot; Session Awareness &amp; Guidance Engine &middot; MIT &middot; one judge per repo
+      </p>
+    </footer>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════════════════════════╗
+       ║  JAVASCRIPT                                                  ║
+       ╚══════════════════════════════════════════════════════════════╝ -->
+  <script>
+    // ── COPY COMMAND ────────────────────────────────────────────────
+    function copyCmd(btn, text) {
+      var done = function() { flashCopied(btn); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function() { fallback(btn, text); });
+      } else {
+        fallback(btn, text);
+      }
+    }
+
+    function fallback(btn, text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+      flashCopied(btn);
+    }
+
+    function flashCopied(btn) {
+      var prev = btn.textContent;
+      btn.textContent = 'COPIED!';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = prev;
+        btn.classList.remove('copied');
+      }, 1800);
+    }
+
+    // ── SCROLL REVEAL ────────────────────────────────────────────────
+    (function() {
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Gate: if reduced motion, reveal everything immediately and stop
+      if (reduced) {
+        document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(function(el) {
+          el.classList.add('on');
+        });
+        return;
+      }
+
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('on');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+      document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(function(el) {
+        io.observe(el);
+      });
+    })();
+  </script>
+
+</body>
+</html>

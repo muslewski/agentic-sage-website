@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAGE — Session Awareness &amp; Guidance Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Caveat:wght@400;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg:         '#0E0D0C',
+            bg2:        '#14110D',
+            surface:    '#141210',
+            surface2:   '#1A1714',
+            border:     '#252018',
+            cream:      '#EFE7D8',
+            'cream-dim':'#A89E92',
+            gold:       '#C8972F',
+            'gold-dim': '#B8862F',
+            'gold-dk':  '#9E7325',
+            olive:      '#6B7A3A',
+            'olive-dk': '#506030',
+            ink:        '#1A1714',
+          },
+          fontFamily: {
+            mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+            display: ['Anton', 'sans-serif'],
+            hand:    ['Caveat', 'cursive'],
+            body:    ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── v6 palette as CSS custom properties ── */
+    :root {
+      --bg:        #0E0D0C;
+      --bg2:       #14110D;
+      --surface:   #141210;
+      --surface2:  #1A1714;
+      --border:    #252018;
+      --cream:     #EFE7D8;
+      --cream-dim: #A89E92;
+      --gold:      #C8972F;
+      --gold-dim:  #B8862F;
+      --gold-dk:   #9E7325;
+      --olive:     #6B7A3A;
+      --olive-dk:  #506030;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Global paper grain (cohesive base) ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.042;
+      pointer-events: none;
+      z-index: 9000;
+      mix-blend-mode: overlay;
+    }
+
+    /* ── Terminal chrome ── */
+    .terminal {
+      background: rgba(9,8,7,0.98);
+      border: 1px solid #262014;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.65), 0 0 0 1px rgba(200,151,47,0.05);
+    }
+    .term-bar {
+      background: #161310;
+      border-bottom: 1px solid #252018;
+      padding: 10px 14px;
+      display: flex; align-items: center; gap: 7px;
+      user-select: none;
+    }
+    .dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+    .dot-r { background:#FF5F57; }
+    .dot-y { background:#FFBD2E; }
+    .dot-g { background:#28C840; }
+    .term-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: #4A4438; letter-spacing: 0.06em; margin: 0 auto;
+    }
+    .term-body {
+      padding: 18px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; line-height: 1.75;
+    }
+
+    /* ── Syntax colors ── */
+    .c-prompt { color: var(--olive); }
+    .c-cmd    { color: var(--cream); }
+    .c-cmt    { color: #3E3830; }
+    .c-gold   { color: var(--gold); }
+    .c-olive  { color: var(--olive); }
+    .c-dim    { color: #4A4438; }
+    .c-err    { color: #C0503A; }
+    .c-cyan   { color: #4A8090; }
+
+    /* ── Cursor ── */
+    .cursor {
+      display: inline-block; width: 8px; height: 1.05em;
+      background: var(--gold); vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+      box-shadow: 0 0 6px rgba(200,151,47,0.5);
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── Wordmark ── */
+    .wordmark {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(3.6rem, 9vw, 7.5rem);
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(200,151,47,0.22), 0 0 60px rgba(200,151,47,0.08);
+      letter-spacing: 0.06em; line-height: 1;
+    }
+
+    /* ── Gold glow ── */
+    .gold-glow {
+      color: var(--gold);
+      text-shadow: 0 0 24px rgba(200,151,47,0.40), 0 0 56px rgba(200,151,47,0.12);
+    }
+
+    /* ── Caveat accents ── */
+    .cav-g { font-family: 'Caveat', cursive; color: var(--gold); }
+    .cav-ol { font-family: 'Caveat', cursive; color: var(--olive); }
+    .cav-d  { font-family: 'Caveat', cursive; color: #6A6058; }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--olive); border: 1px solid #3A4520;
+      padding: 3px 10px; border-radius: 2px;
+    }
+
+    /* ── Section label ── */
+    .sec-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: #3A3428; letter-spacing: 0.16em;
+      text-transform: uppercase; margin-bottom: 18px; display: block;
+    }
+
+    /* ── Caveat section label variant ── */
+    .sec-label-cav {
+      font-family: 'Caveat', cursive;
+      font-size: 22px; color: var(--gold);
+      letter-spacing: 0.02em; margin-bottom: 16px; display: block;
+    }
+
+    /* ── Wavy underline ── */
+    .wavy-wrap { position: relative; display: inline-block; }
+    .wavy-wrap svg {
+      position: absolute; bottom: -7px; left: 0;
+      width: 100%; overflow: visible; pointer-events: none;
+    }
+
+    /* ── Buttons ── */
+    .btn-gold {
+      display: inline-block; text-decoration: none;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700;
+      font-size: 12px; letter-spacing: 0.06em;
+      background: var(--gold); color: var(--bg);
+      padding: 13px 28px; border: none; border-radius: 4px; cursor: pointer;
+      transition: background 0.22s cubic-bezier(0.4,0,0.2,1),
+                  box-shadow 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    .btn-gold:hover {
+      background: var(--gold-dim);
+      box-shadow: 0 0 24px rgba(200,151,47,0.30);
+    }
+
+    /* ── Copy block ── */
+    .copy-block {
+      background: var(--surface); border: 1px solid #222018; border-radius: 4px;
+      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      transition: border-color 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    .copy-block:hover { border-color: rgba(200,151,47,0.30); }
+    .copy-block.copied { border-color: var(--olive); }
+    .copy-icon { color: #3A3428; font-size: 13px; flex-shrink: 0; transition: color 0.22s; }
+    .copy-block.copied .copy-icon { color: var(--olive); }
+
+    /* ── Ornament divider (v7 style) ── */
+    .rule { border: none; border-top: 1px solid #1E1C18; }
+    .rule-cross {
+      text-align: center; padding: 12px 0;
+      font-family: 'Caveat', cursive; font-size: 16px;
+      color: var(--gold); opacity: 0.22;
+    }
+
+    /* ── Hero grid ── */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 52px;
+      align-items: center; /* vertically center left against terminal */
+    }
+
+    /* ── 2-column grids ── */
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+    .g2-start { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; }
+    .g2-wide { display: grid; grid-template-columns: 5fr 8fr; gap: 40px; align-items: start; }
+    .g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .peek-g { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+
+    @media (max-width: 960px) {
+      .hero-grid, .g2, .g2-start, .g2-wide, .peek-g {
+        grid-template-columns: 1fr; gap: 32px;
+      }
+      .g3 { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 560px) {
+      .g3 { grid-template-columns: 1fr; }
+    }
+
+    /* ── Speech bubble (v7 dark) ── */
+    .speech-bub {
+      background: var(--surface2);
+      border: 2px solid var(--gold);
+      border-radius: 14px; padding: 22px 26px; position: relative;
+      box-shadow: 0 0 28px rgba(200,151,47,0.07), 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .speech-bub::before {
+      content: ''; position: absolute; left: -16px; top: 34px;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-right: 16px solid var(--gold);
+    }
+    .speech-bub::after {
+      content: ''; position: absolute; left: -12px; top: 36px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 12px solid var(--surface2);
+    }
+
+    /* ── Editorial plate (v7 dark) ── */
+    .plate-ink {
+      border: 2px solid var(--gold);
+      box-shadow: 10px 12px 0 rgba(200,151,47,0.18), 0 28px 70px rgba(0,0,0,0.65);
+      background: var(--surface2); padding: 6px;
+      display: block;
+    }
+    .plate-ink img { display: block; width: 100%; height: auto; }
+    .plate-cap {
+      font-family: 'Caveat', cursive; font-size: 15px;
+      text-align: center; margin-top: 6px; color: #6A6058;
+    }
+
+    /* ── Image grain frame (paper texture on images) ── */
+    .img-grain {
+      position: relative;
+    }
+    .img-grain::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+      background-size: 160px 160px;
+      opacity: 0.07;
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: overlay;
+      border-radius: inherit;
+    }
+
+    /* ── Conventions band ── */
+    .conv-band {
+      border-top: 1px solid #1E1C18; border-bottom: 1px solid #1E1C18;
+      background: var(--surface); overflow: hidden; position: relative;
+    }
+    .conv-band img { display:block; width:100%; height:auto; max-height:480px; object-fit:contain; }
+
+    /* ── Pillar cards (v9 re-imagined dark — native to dark palette) ── */
+    .pillar-d {
+      background: var(--surface);
+      border: 1px solid #272218;
+      border-radius: 6px;
+      padding: 20px 18px; position: relative; overflow: hidden;
+      transition: border-color 0.28s cubic-bezier(0.4,0,0.2,1),
+                  box-shadow   0.28s cubic-bezier(0.4,0,0.2,1),
+                  transform    0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    .pillar-d::before {
+      content: attr(data-n);
+      font-family: 'Caveat', cursive;
+      font-size: 90px; color: rgba(200,151,47,0.042);
+      position: absolute; top: -14px; right: 4px; line-height: 1;
+      pointer-events: none; user-select: none;
+    }
+    .pillar-d:hover {
+      border-color: rgba(200,151,47,0.34);
+      box-shadow: 0 0 28px rgba(200,151,47,0.05), 0 8px 32px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .pillar-d .pn {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; color: var(--olive); letter-spacing: 0.10em;
+      background: rgba(107,122,58,0.09); border: 1px solid rgba(107,122,58,0.18);
+      padding: 2px 8px; border-radius: 2px; margin-bottom: 12px;
+    }
+
+    /* ── Step card (v7) ── */
+    .step-card {
+      background: var(--surface2); border: 1px solid #2E2820;
+      border-radius: 6px; padding: 18px 20px;
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .step-n {
+      font-family: 'Caveat', cursive; font-size: 38px; font-weight: 700;
+      color: var(--gold); line-height: 1; flex-shrink: 0;
+      width: 38px; text-align: center;
+    }
+
+    /* ── Peek highlighted row ── */
+    .peek-hl {
+      background: rgba(200,151,47,0.07);
+      padding: 2px 6px;
+      border-left: 2px solid rgba(200,151,47,0.6);
+      margin-left: -6px;
+    }
+
+    /* ── Scroll reveal ── */
+    .rv {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.62s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.62s cubic-bezier(0.4,0,0.2,1);
+    }
+    .rv.in { opacity: 1; transform: none; }
+    .rv.d1 { transition-delay: 0.08s; }
+    .rv.d2 { transition-delay: 0.16s; }
+    .rv.d3 { transition-delay: 0.24s; }
+    .rv.d4 { transition-delay: 0.32s; }
+
+    /* ── Hero entrance ── */
+    .hi { opacity: 0; animation: fadeUp 0.72s cubic-bezier(0.4,0,0.2,1) forwards; }
+    .hi1 { animation-delay: 0.05s; }
+    .hi2 { animation-delay: 0.18s; }
+    .hi3 { animation-delay: 0.30s; }
+    .hi4 { animation-delay: 0.44s; }
+    .hi5 { animation-delay: 0.58s; }
+    .hi6 { animation-delay: 0.72s; }
+    .hi7 { animation-delay: 0.86s; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #252018; border-radius: 3px; }
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      .rv  { opacity:1!important; transform:none!important; transition:none!important; }
+      .hi  { opacity:1!important; animation:none!important; }
+      .cursor { animation:none!important; opacity:1; }
+      #hero-anim { display:none!important; }
+      #hero-static { display:block!important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════ NAV (v8 — backdrop-blur + paper grain) ════ -->
+<nav style="position:sticky;top:0;z-index:200;border-bottom:1px solid #1E1C18;">
+  <!-- paper grain on nav -->
+  <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27%3E%3Cfilter id=%27g%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.88%27 numOctaves=%274%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix type=%27saturate%27 values=%270%27/%3E%3C/filter%3E%3Crect width=%27180%27 height=%27180%27 filter=%27url(%23g)%27/%3E%3C/svg%3E');background-size:160px 160px;opacity:0.065;mix-blend-mode:overlay;z-index:0;"></div>
+  <!-- nav content -->
+  <div style="position:relative;z-index:1;background:rgba(14,13,12,0.95);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);">
+    <div style="max-width:1160px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <div style="display:flex;align-items:baseline;gap:12px;">
+        <span style="font-family:Anton,sans-serif;font-size:24px;color:var(--gold);letter-spacing:0.10em;text-shadow:0 0 12px rgba(200,151,47,0.30);">SAGE</span>
+        <span class="cav-d" style="font-size:17px;">fleet judge</span>
+      </div>
+      <a href="https://github.com/muslewski/agentic-sage" target="_blank" rel="noopener" class="btn-gold" style="font-size:11px;padding:9px 20px;">View on GitHub →</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ════ HERO (v6 left · v7 terminal right) ════ -->
+<section style="padding:clamp(64px,8vw,120px) 24px;max-width:1160px;margin:0 auto;">
+  <div class="hero-grid">
+
+    <!-- LEFT (v6): badge → wordmark → expansion → tagline → sub → caveat → CTAs -->
+    <div>
+      <div class="hi hi1 badge" style="margin-bottom:22px;">Open Source · Zero Dependencies</div>
+
+      <div class="hi hi2 wordmark">SAGE</div>
+
+      <div class="hi hi3 cav-g" style="font-size:20px;margin-top:7px;margin-bottom:26px;">
+        Session Awareness &amp; Guidance Engine
+      </div>
+
+      <div class="hi hi4" style="margin-bottom:16px;">
+        <p style="font-size:clamp(16px,2.2vw,20px);color:var(--cream);opacity:0.7;margin-bottom:7px;font-style:italic;font-family:'Inter',sans-serif;">I don't do the work.</p>
+        <div class="wavy-wrap">
+          <span style="font-family:Anton,sans-serif;font-size:clamp(28px,5vw,56px);color:var(--cream);line-height:1;">I JUDGE IT.</span>
+          <svg id="ul-hero-svg" viewBox="0 0 420 14" fill="none" preserveAspectRatio="none" aria-hidden="true">
+            <path id="ul-hero" d="M 3 9 Q 52 2,105 9 Q 158 16,210 9 Q 262 2,315 9 Q 368 16,417 9"
+                  stroke="var(--gold)" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+      </div>
+
+      <p class="hi hi5" style="font-family:'Inter',sans-serif;font-size:13px;color:#6A6058;line-height:1.85;max-width:400px;margin-bottom:10px;">
+        A passive, read-only judge for fleets of parallel AI coding sessions. One judge per repo.
+      </p>
+
+      <div class="hi hi6 cav-g" style="font-size:20px;margin-bottom:30px;">↳ watches everything, changes nothing</div>
+
+      <div class="hi hi7" style="display:flex;flex-direction:column;gap:12px;max-width:420px;">
+        <a href="https://github.com/muslewski/agentic-sage" target="_blank" rel="noopener" class="btn-gold" style="text-align:center;font-size:13px;padding:14px 28px;">View on GitHub →</a>
+        <div class="copy-block" onclick="copyCmd(this)" data-cmd="git clone https://github.com/muslewski/agentic-sage" role="button" aria-label="Copy git clone command">
+          <span class="copy-icon">⎘</span>
+          <span class="c-olive">$</span>&nbsp;<span style="color:var(--cream);word-break:break-all;">git clone https://github.com/muslewski/agentic-sage</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT (v7): animated terminal + Caveat cursive line beneath -->
+    <div>
+      <div class="terminal">
+        <div class="term-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="term-title">sage — fleet judge</span>
+        </div>
+        <!-- static fallback (prefers-reduced-motion) -->
+        <div id="hero-static" class="term-body" style="display:none;font-size:12px;">
+          <div><span class="c-prompt">$</span> <span class="c-cmd">sage board</span><span class="c-cmt">   # fleet at a glance</span></div>
+          <div style="height:8px;"></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:70px;">agent-1</span><span class="c-dim" style="display:inline-block;width:110px;">src/auth/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">8m ago</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:70px;">agent-2</span><span class="c-dim" style="display:inline-block;width:110px;">src/billing/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">12m ago</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:70px;">agent-3</span><span class="c-dim" style="display:inline-block;width:110px;">src/editor/</span><span class="c-olive" style="display:inline-block;width:52px;">idle</span><span class="c-dim">3m ago</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:70px;">agent-4</span><span class="c-dim" style="display:inline-block;width:110px;">src/api/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">1m ago</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:70px;">agent-5</span><span class="c-dim" style="display:inline-block;width:110px;">src/tests/</span><span class="c-cyan" style="display:inline-block;width:52px;">done</span><span class="c-dim">22m ago</span></div>
+          <div style="height:10px;"></div>
+          <div><span class="c-prompt">$</span> <span class="cursor"></span></div>
+        </div>
+        <!-- animated body -->
+        <div id="hero-anim" class="term-body" style="min-height:280px;font-size:12px;"></div>
+      </div>
+      <!-- v7 Caveat cursive line beneath terminal — the reason this terminal was picked -->
+      <div class="cav-d" style="font-size:17px;margin-top:10px;text-align:right;padding-right:6px;" aria-hidden="true">↑ watching your fleet, live</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ornament divider -->
+<hr class="rule"><div class="rule-cross" aria-hidden="true">✦</div><hr class="rule">
+
+
+<!-- ════ PROBLEM (v8 — cinematic magazine treatment) ════ -->
+<div style="background:var(--surface2);">
+<section id="problem" style="padding:clamp(80px,10vw,140px) 24px;max-width:1160px;margin:0 auto;">
+
+  <div class="rv" style="position:relative;margin-bottom:40px;">
+    <!-- rotated caveat annotation (v8/v7 cinematic) -->
+    <div class="cav-g" aria-hidden="true"
+         style="position:absolute;top:-28px;right:4px;font-size:21px;transform:rotate(-3.5deg);opacity:0.75;">
+      ← this is you, right now
+    </div>
+    <span class="sec-label">// the problem</span>
+    <h2 style="font-family:Anton,sans-serif;font-size:clamp(44px,9.5vw,104px);color:var(--cream);line-height:0.94;letter-spacing:0.01em;">
+      Eight agents,<br>
+      one repo,<br>
+      <span style="position:relative;display:inline-block;">
+        <span class="gold-glow">zero&nbsp;coordination.</span>
+        <svg id="ul-prob-svg" style="position:absolute;bottom:-6px;left:0;width:100%;overflow:visible;" viewBox="0 0 900 12" fill="none" preserveAspectRatio="none" aria-hidden="true">
+          <path id="ul-prob" d="M 3 6 Q 112 1,225 6 Q 337 11,450 6 Q 562 1,675 6 Q 787 11,897 6"
+                stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.65"/>
+        </svg>
+      </span>
+    </h2>
+  </div>
+
+  <!-- two columns: body + fleet.log terminal -->
+  <div class="rv d2 g2-start">
+    <div>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;color:#6A6058;line-height:1.85;margin-bottom:28px;">
+        Run a fleet of coding agents at once and they collide — same files, duplicated work, lost context across sessions, no shared source of truth. Nobody is watching the fleet as a whole.
+      </p>
+      <!-- Caveat pull-quote (v7 editorial) -->
+      <div style="border-left:3px solid var(--gold);padding-left:18px;">
+        <div class="cav-g" style="font-size:clamp(22px,3vw,28px);line-height:1.4;">"Nobody is watching<br>the fleet as a whole."</div>
+      </div>
+    </div>
+
+    <div class="terminal rv d3">
+      <div class="term-bar">
+        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+        <span class="term-title">fleet.log — errors</span>
+      </div>
+      <div class="term-body" style="font-size:12px;">
+        <div><span class="c-err">ERR</span> <span class="c-dim">agent-3 &amp; agent-7 modified src/auth/session.ts simultaneously</span></div>
+        <div><span class="c-err">ERR</span> <span class="c-dim">merge conflict: 14 files — 3 sessions diverged</span></div>
+        <div style="height:6px;"></div>
+        <div><span class="c-gold">WRN</span> <span class="c-dim">agent-2 regenerating work already done by agent-5</span></div>
+        <div><span class="c-gold">WRN</span> <span class="c-dim">no shared context — each session flying blind</span></div>
+        <div style="height:10px;"></div>
+        <div><span style="color:#3A3428;">?&nbsp;</span><span class="c-dim">who is watching the fleet as a whole?</span></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+</div>
+
+
+<!-- ornament divider -->
+<hr class="rule"><div class="rule-cross" aria-hidden="true">✦</div><hr class="rule">
+
+
+<!-- ════ WHAT SAGE IS (v7 — mascot speech bubble) ════ -->
+<div style="background:var(--surface2);">
+<section id="what-sage-is" style="padding:clamp(80px,10vw,140px) 24px;max-width:1160px;margin:0 auto;">
+
+  <span class="sec-label-cav rv">// what sage is —</span>
+
+  <h2 class="rv d1" style="font-family:Anton,sans-serif;font-size:clamp(36px,6.5vw,76px);color:var(--cream);line-height:1;letter-spacing:0.02em;margin-bottom:52px;">
+    A judge, <span class="gold-glow">not a boss.</span>
+  </h2>
+
+  <div style="display:flex;flex-wrap:wrap;gap:52px;align-items:flex-start;">
+
+    <!-- left: prose + JSDoc-style terminal -->
+    <div style="flex:1;min-width:280px;max-width:460px;">
+      <p class="rv d1" style="font-family:'Inter',sans-serif;font-size:15px;color:#6A6058;line-height:1.85;margin-bottom:14px;">
+        SAGE sits beside your fleet and watches every session. Ask it anything — who's touching what, where two branches diverged, what the backlog says — and it answers.
+      </p>
+      <p class="rv d2" style="font-family:'Inter',sans-serif;font-size:15px;color:#6A6058;line-height:1.85;margin-bottom:22px;">
+        It never edits your code, never spawns agents, never blocks an action. Passive by design.
+      </p>
+      <div class="rv d3 cav-ol" style="font-size:20px;margin-bottom:28px;" aria-hidden="true">← literally cannot write to your repo</div>
+
+      <div class="rv d3 terminal">
+        <div class="term-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="term-title">sage.d.ts</span>
+        </div>
+        <div class="term-body" style="font-size:12px;line-height:1.9;">
+          <div style="color:#3A3428;">/**</div>
+          <div><span class="c-dim"> * @passive  </span><span style="color:#5A5248;">— watches, never edits</span></div>
+          <div><span class="c-dim"> * @readonly </span><span style="color:#5A5248;">— cannot change your repo. ever.</span></div>
+          <div><span class="c-dim"> * @zero-deps</span><span style="color:#5A5248;">— one Node CLI, nothing else</span></div>
+          <div><span class="c-dim"> * @default-off</span><span style="color:#5A5248;">— nothing until <span class="c-gold">sage on</span></span></div>
+          <div><span class="c-dim"> * @fail-open</span><span style="color:#5A5248;">— errors allow, never block</span></div>
+          <div style="color:#3A3428;"> */</div>
+          <div style="margin-top:6px;"><span class="c-olive">export default</span><span class="c-gold"> SAGE</span><span class="c-dim">;</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- right: mascot + speech bubble (v7) -->
+    <div class="rv d2" style="flex:1;min-width:260px;display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
+      <div class="img-grain" style="flex-shrink:0;">
+        <img src="assets/sage-square.png"
+             alt="SAGE mascot — robed sage with sunglasses and staff"
+             style="width:clamp(200px,26vw,340px);height:auto;border:2px solid var(--gold);border-radius:4px;box-shadow:6px 8px 0 rgba(200,151,47,0.15),0 24px 50px rgba(0,0,0,0.6);display:block;">
+      </div>
+      <div class="speech-bub" style="flex:1;min-width:200px;margin-top:24px;">
+        <div class="cav-g" style="font-size:clamp(22px,3vw,30px);line-height:1.35;margin-bottom:10px;">
+          "Advisor, not a boss —<br>just the truth."
+        </div>
+        <div class="cav-d" style="font-size:18px;">— SAGE, your fleet judge</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+
+
+<!-- ornament divider -->
+<hr class="rule"><div class="rule-cross" aria-hidden="true">✦</div><hr class="rule">
+
+
+<!-- ════ HOW IT WORKS (v6 — wide setup image) ════ -->
+<section id="how-it-works" style="padding:clamp(80px,10vw,140px) 24px;max-width:1160px;margin:0 auto;">
+
+  <span class="sec-label rv">// how it works</span>
+  <h2 class="rv d1" style="font-family:Anton,sans-serif;font-size:clamp(28px,4.5vw,56px);color:var(--cream);line-height:1;letter-spacing:0.02em;margin-bottom:52px;">
+    Four commands. Done.
+  </h2>
+
+  <div class="g2-wide">
+
+    <!-- Steps (left, narrower) -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="step-card rv d1">
+        <div class="step-n">1</div>
+        <div>
+          <div style="font-family:'Inter',sans-serif;font-weight:600;font-size:14px;color:var(--cream);margin-bottom:6px;">Clone</div>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);background:rgba(200,151,47,0.08);padding:3px 8px;border-radius:3px;word-break:break-all;">git clone https://github.com/muslewski/agentic-sage</code>
+        </div>
+      </div>
+
+      <div class="step-card rv d2">
+        <div class="step-n">2</div>
+        <div>
+          <div style="font-family:'Inter',sans-serif;font-weight:600;font-size:14px;color:var(--cream);margin-bottom:6px;">Install</div>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);background:rgba(200,151,47,0.08);padding:3px 8px;border-radius:3px;">node install.mjs</code>
+          <p style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;margin-top:6px;line-height:1.6;">Wires the hook; touches nothing else.</p>
+        </div>
+      </div>
+
+      <div class="step-card rv d3">
+        <div class="step-n">3</div>
+        <div>
+          <div style="font-family:'Inter',sans-serif;font-weight:600;font-size:14px;color:var(--cream);margin-bottom:6px;">Enable</div>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);background:rgba(200,151,47,0.08);padding:3px 8px;border-radius:3px;">sage on</code>
+          <p style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;margin-top:6px;line-height:1.6;">Nothing runs until you flip this switch.</p>
+        </div>
+      </div>
+
+      <div class="step-card rv d4" style="border-color:#3A4520;">
+        <div class="step-n" style="color:var(--olive);">4</div>
+        <div>
+          <div style="font-family:'Inter',sans-serif;font-weight:600;font-size:14px;color:var(--cream);margin-bottom:6px;">Verify</div>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--olive);background:rgba(107,122,58,0.10);padding:3px 8px;border-radius:3px;">sage doctor</code>
+          <div class="cav-ol" style="font-size:19px;margin-top:6px;">✓ you're watching</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- sage-setup.png — wide column (v6 "beautiful" proportion) -->
+    <div class="rv d2">
+      <div class="plate-ink img-grain" style="transform:rotate(-0.6deg);">
+        <img src="assets/sage-setup.png" alt="SAGE four-step setup diagram: Clone, Install, Enable, Doctor">
+        <p class="plate-cap">fig. 1 — four-step setup</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════ CONVENTIONS FULL-WIDTH BAND (visual divider + v6 conventions) ════ -->
+<div class="conv-band rv img-grain">
+  <img src="assets/sage-conventions.png" alt="SAGE controller conventions diagram — how the judge integrates with your fleet">
+</div>
+
+
+<!-- ════ PILLARS (v9 — re-imagined native dark) ════ -->
+<section id="principles" style="padding:clamp(80px,10vw,140px) 24px;max-width:1160px;margin:0 auto;">
+
+  <span class="sec-label-cav rv">// principles —</span>
+  <h2 class="rv d1" style="font-family:Anton,sans-serif;font-size:clamp(28px,4.5vw,56px);color:var(--cream);line-height:1;letter-spacing:0.02em;margin-bottom:44px;">
+    Six hard rules.
+  </h2>
+
+  <!-- sage doctor checklist terminal (v7) -->
+  <div class="rv d2 terminal" style="max-width:580px;margin-bottom:16px;">
+    <div class="term-bar">
+      <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+      <span class="term-title">$ sage doctor — principles check</span>
+    </div>
+    <div class="term-body" style="font-size:12px;line-height:2;">
+      <div><span class="c-olive">✓</span> <span class="c-cmd" style="display:inline-block;min-width:158px;">passive by design</span><span class="c-cmt">— watches; never edits</span></div>
+      <div><span class="c-olive">✓</span> <span class="c-cmd" style="display:inline-block;min-width:158px;">read-only &amp; safe</span><span class="c-cmt">— cannot change your repo. ever.</span></div>
+      <div><span class="c-olive">✓</span> <span class="c-cmd" style="display:inline-block;min-width:158px;">zero-dependency</span><span class="c-cmt">— one Node CLI, no bloat</span></div>
+      <div><span class="c-olive">✓</span> <span class="c-cmd" style="display:inline-block;min-width:158px;">default-off</span><span class="c-cmt">— nothing until `sage on`</span></div>
+      <div><span class="c-olive">✓</span> <span class="c-cmd" style="display:inline-block;min-width:158px;">fail-open</span><span class="c-cmt">— errors allow, never block</span></div>
+      <div><span class="c-olive">✓</span> <span class="c-cmd" style="display:inline-block;min-width:158px;">hot-path-cheap</span><span class="c-cmt">— idle = instant exit</span></div>
+      <div style="border-top:1px solid #2A2418;margin-top:10px;padding-top:12px;display:flex;align-items:center;gap:12px;">
+        <span class="c-olive">all checks passed</span>
+        <span class="cav-g" style="font-size:18px;" aria-hidden="true">← every. single. time.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cav-ol rv" style="font-size:20px;margin-bottom:44px;" aria-hidden="true">↑ sworn to the fleet</div>
+
+  <!-- Six pillar cards (v9 layout, dark-reimagined) -->
+  <div class="g3">
+
+    <div class="pillar-d rv d1" data-n="01">
+      <div class="pn">01</div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px;">Passive by design</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;line-height:1.7;">Watches and answers. Never edits, spawns, or blocks. Your fleet keeps moving; SAGE keeps score.</div>
+    </div>
+
+    <div class="pillar-d rv d2" data-n="02">
+      <div class="pn">02</div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px;">Read-only &amp; safe</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;line-height:1.7;">It cannot change your repo. Ever. No hooks that write, no side effects, no surprises.</div>
+      <div class="cav-g" style="font-size:16px;margin-top:8px;" aria-hidden="true">sworn to read</div>
+    </div>
+
+    <div class="pillar-d rv d3" data-n="03">
+      <div class="pn">03</div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px;">Zero-dependency</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;line-height:1.7;">One Node CLI, no install bloat. Clone and run. Your <code style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);background:rgba(200,151,47,0.08);padding:1px 4px;">package.json</code> stays untouched.</div>
+    </div>
+
+    <div class="pillar-d rv d1" data-n="04">
+      <div class="pn">04</div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px;">Default-off</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;line-height:1.7;">Installing changes nothing until <code style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);background:rgba(200,151,47,0.08);padding:1px 4px;">sage on</code>. Try it without committing to it.</div>
+    </div>
+
+    <div class="pillar-d rv d2" data-n="05">
+      <div class="pn">05</div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px;">Fail-open</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;line-height:1.7;">Any error in the optional guard allows the action through. SAGE is never in your way — even broken.</div>
+    </div>
+
+    <div class="pillar-d rv d3" data-n="06">
+      <div class="pn">06</div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--cream);margin-bottom:8px;">Hot-path-cheap</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;color:#5A5248;line-height:1.7;">When idle the hook short-circuits instantly. Zero cost on the commits that matter most.</div>
+      <div class="cav-g" style="font-size:16px;margin-top:8px;" aria-hidden="true">literally free when idle</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ornament divider -->
+<hr class="rule"><div class="rule-cross" aria-hidden="true">✦</div><hr class="rule">
+
+
+<!-- ════ A PEEK (v7 — dual terminal panes + Caveat callout) ════ -->
+<section id="peek" style="padding:clamp(80px,10vw,140px) 24px;max-width:1160px;margin:0 auto;">
+
+  <span class="sec-label-cav rv">// a peek —</span>
+  <h2 class="rv d1" style="font-family:Anton,sans-serif;font-size:clamp(28px,4.5vw,56px);color:var(--cream);line-height:1;letter-spacing:0.02em;margin-bottom:48px;">
+    Ask anything about your fleet.
+  </h2>
+
+  <div class="rv d2 peek-g">
+
+    <!-- left: 4 commands -->
+    <div class="terminal">
+      <div class="term-bar">
+        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+        <span class="term-title">sage — commands</span>
+      </div>
+      <div class="term-body" style="font-size:12px;">
+        <div style="margin-bottom:14px;"><span class="c-prompt">$</span> <span class="c-cmd">sage board</span><span class="c-cmt">          # the whole fleet at a glance</span></div>
+        <div style="margin-bottom:14px;"><span class="c-prompt">$</span> <span class="c-cmd">sage territory</span><span class="c-cmt">     # who's touching which files</span></div>
+        <div style="margin-bottom:14px;"><span class="c-prompt">$</span> <span class="c-cmd">sage backlog</span><span class="c-cmt">        # what each session claimed</span></div>
+        <div><span class="c-prompt">$</span> <span class="c-cmd">sage doctor</span><span class="c-cmt">         # is my setup valid?</span></div>
+        <div style="border-top:1px solid #2A2418;margin-top:16px;padding-top:12px;">
+          <span class="cav-g" style="font-size:19px;" aria-hidden="true">that's the whole CLI →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- right: sage board output + Caveat callout -->
+    <div style="position:relative;">
+      <div class="terminal">
+        <div class="term-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="term-title">$ sage board — live output</span>
+        </div>
+        <div class="term-body" style="font-size:12px;">
+          <div style="color:#3A3428;margin-bottom:8px;">── fleet board ─────────────────────</div>
+
+          <div class="peek-hl">
+            <span class="c-olive">●</span>
+            <span class="c-cmd" style="display:inline-block;width:68px;">agent-1</span>
+            <span class="c-dim" style="display:inline-block;width:96px;">src/auth/</span>
+            <span class="c-gold" style="display:inline-block;width:52px;">active</span>
+            <span class="c-dim">8m</span>
+          </div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-2</span><span class="c-dim" style="display:inline-block;width:96px;">src/billing/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">12m</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-3</span><span class="c-dim" style="display:inline-block;width:96px;">src/editor/</span><span class="c-olive" style="display:inline-block;width:52px;">idle</span><span class="c-dim">3m</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-4</span><span class="c-dim" style="display:inline-block;width:96px;">src/api/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">1m</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-5</span><span class="c-dim" style="display:inline-block;width:96px;">src/tests/</span><span class="c-cyan" style="display:inline-block;width:52px;">done</span><span class="c-dim">22m</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-6</span><span class="c-dim" style="display:inline-block;width:96px;">src/store/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">4m</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-7</span><span class="c-dim" style="display:inline-block;width:96px;">src/hooks/</span><span class="c-olive" style="display:inline-block;width:52px;">idle</span><span class="c-dim">18m</span></div>
+          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-8</span><span class="c-dim" style="display:inline-block;width:96px;">src/types/</span><span class="c-cyan" style="display:inline-block;width:52px;">done</span><span class="c-dim">35m</span></div>
+
+          <div style="color:#3A3428;margin-top:8px;margin-bottom:4px;">── territory ───────────────────────</div>
+          <div><span class="c-dim" style="display:inline-block;width:170px;">src/auth/session.ts</span><span class="c-dim">→ </span><span class="c-gold">agent-1</span></div>
+          <div><span class="c-dim" style="display:inline-block;width:170px;">src/billing/*.ts</span><span class="c-dim">→ </span><span class="c-gold">agent-2</span></div>
+          <div style="margin-top:8px;"><span class="c-olive">✓</span> <span style="color:#5A5248;">no conflicts detected</span></div>
+        </div>
+      </div>
+      <!-- Caveat callout (v7) -->
+      <div class="cav-g" aria-hidden="true"
+           style="font-size:19px;margin-top:10px;text-align:right;transform:rotate(2deg);display:inline-block;float:right;">← real output, no BS</div>
+      <div style="clear:both;"></div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ornament divider -->
+<hr class="rule"><div class="rule-cross" aria-hidden="true">✦</div><hr class="rule">
+
+
+<!-- ════ THE JUDGE (v7 — banner plate statement) ════ -->
+<section id="the-judge" style="padding:clamp(80px,10vw,140px) 24px;max-width:1000px;margin:0 auto;">
+
+  <div class="rv" style="text-align:center;margin-bottom:28px;">
+    <span class="sec-label-cav" style="display:inline-block;">// the judge</span>
+  </div>
+
+  <div class="rv d1" style="display:flex;justify-content:center;">
+    <div class="plate-ink img-grain" style="transform:rotate(-1.2deg);width:100%;box-shadow:10px 14px 0 rgba(200,151,47,0.20),0 32px 80px rgba(0,0,0,0.70);">
+      <img src="assets/sage-banner.png"
+           alt="SAGE mascot — a robed sage with sunglasses and a staff, with the motto: I DON'T DO THE WORK. I JUDGE IT."
+           style="width:100%;height:auto;display:block;">
+      <p class="plate-cap" style="font-size:17px;">the sage sees all &nbsp;·&nbsp; the sage judges all</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ornament divider -->
+<hr class="rule"><div class="rule-cross" aria-hidden="true">✦</div><hr class="rule">
+
+
+<!-- ════ FINAL CTA (v7) ════ -->
+<section id="cta" style="padding:clamp(96px,12vw,160px) 24px;max-width:1160px;margin:0 auto;text-align:center;">
+
+  <div class="rv cav-d" style="font-size:20px;margin-bottom:18px;">// bring a judge to your fleet</div>
+
+  <h2 class="rv d1" style="font-family:Anton,sans-serif;font-size:clamp(40px,8vw,96px);color:var(--cream);line-height:1;letter-spacing:0.03em;margin-bottom:12px;">
+    Bring a judge<br>
+    <span style="position:relative;display:inline-block;">
+      <span class="gold-glow">to your fleet.</span>
+      <svg id="ul-cta-svg" style="position:absolute;bottom:-8px;left:0;width:100%;overflow:visible;" viewBox="0 0 600 14" fill="none" preserveAspectRatio="none" aria-hidden="true">
+        <path id="ul-cta" d="M 3 9 Q 75 2,150 9 Q 225 16,300 9 Q 375 2,450 9 Q 525 16,597 9"
+              stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      </svg>
+    </span>
+  </h2>
+
+  <p class="rv d2" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3A3428;letter-spacing:0.14em;text-transform:uppercase;margin-top:8px;margin-bottom:52px;">
+    MIT · zero dependencies · one judge per repo
+  </p>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:14px;max-width:520px;margin:0 auto;">
+    <a href="https://github.com/muslewski/agentic-sage" target="_blank" rel="noopener"
+       class="btn-gold rv d2" style="width:100%;text-align:center;font-size:14px;padding:15px 28px;">View on GitHub →</a>
+    <div class="copy-block rv d3" onclick="copyCmd(this)" data-cmd="git clone https://github.com/muslewski/agentic-sage"
+         style="width:100%;justify-content:center;" role="button" aria-label="Copy git clone command">
+      <span class="copy-icon">⎘</span>
+      <span class="c-olive">$</span>&nbsp;<span style="color:var(--cream);word-break:break-all;">git clone https://github.com/muslewski/agentic-sage</span>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ════ FOOTER (v9 — recolored to v6 dark) ════ -->
+<footer style="border-top:1px solid #1E1C18;padding:28px 24px;text-align:center;">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#2E2A24;letter-spacing:0.12em;">
+    SAGE · Session Awareness &amp; Guidance Engine · MIT · one judge per repo
+  </div>
+</footer>
+
+
+<!-- ════ JS ════ -->
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Scroll reveal ──────────────────────────────────────────────────
+  const rvEls = document.querySelectorAll('.rv');
+  if (!reduced) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.07, rootMargin: '0px 0px -32px 0px' });
+    rvEls.forEach(el => io.observe(el));
+  } else {
+    rvEls.forEach(el => el.classList.add('in'));
+  }
+
+  // ── Copy command ───────────────────────────────────────────────────
+  window.copyCmd = function(el) {
+    const cmd = el.getAttribute('data-cmd');
+    if (!cmd || !navigator.clipboard) return;
+    navigator.clipboard.writeText(cmd).then(() => {
+      el.classList.add('copied');
+      const icon = el.querySelector('.copy-icon');
+      if (icon) {
+        const orig = icon.textContent;
+        icon.textContent = '✓';
+        setTimeout(() => { icon.textContent = orig; el.classList.remove('copied'); }, 1800);
+      }
+    }).catch(() => {});
+  };
+
+  // ── Wavy underline draw-on (v1 technique) ─────────────────────────
+  function initWavy(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    try {
+      const len = el.getTotalLength();
+      el.style.strokeDasharray  = len;
+      el.style.strokeDashoffset = len;
+      el.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    } catch(e) {}
+  }
+  function drawWavy(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.strokeDashoffset = '0';
+  }
+
+  if (!reduced) {
+    ['ul-hero','ul-prob','ul-cta'].forEach(initWavy);
+
+    // Hero underline after entrance settles
+    setTimeout(() => drawWavy('ul-hero'), 940);
+
+    // Scroll-triggered underlines
+    const svgTargets = { 'ul-prob-svg': 'ul-prob', 'ul-cta-svg': 'ul-cta' };
+    const svgObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const pathId = svgTargets[e.target.id];
+        if (pathId) setTimeout(() => drawWavy(pathId), 180);
+        svgObs.unobserve(e.target);
+      });
+    }, { threshold: 0.55 });
+    Object.keys(svgTargets).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) svgObs.observe(el.closest('svg') || el.parentElement);
+    });
+
+  } else {
+    ['ul-hero','ul-prob','ul-cta'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.strokeDasharray = '9999'; el.style.strokeDashoffset = '0'; }
+    });
+  }
+
+  if (reduced) return;
+
+  // ── Hero terminal animation (v7 exact) ─────────────────────────────
+  const heroBody = document.getElementById('hero-anim');
+  if (!heroBody) return;
+
+  const fleet = [
+    { agent:'agent-1', path:'src/auth/',    status:'active', time:'8m',  color:'#C8972F' },
+    { agent:'agent-2', path:'src/billing/', status:'active', time:'12m', color:'#C8972F' },
+    { agent:'agent-3', path:'src/editor/',  status:'idle',   time:'3m',  color:'#6B7A3A' },
+    { agent:'agent-4', path:'src/api/',     status:'active', time:'1m',  color:'#C8972F' },
+    { agent:'agent-5', path:'src/tests/',   status:'done',   time:'22m', color:'#4A8090' },
+  ];
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  function mkEl(tag, html, style) {
+    const d = document.createElement(tag || 'div');
+    if (html !== undefined) d.innerHTML = html;
+    if (style) Object.assign(d.style, style);
+    return d;
+  }
+
+  async function typeInto(span, text, base = 52) {
+    let s = '';
+    for (const ch of text) {
+      s += ch;
+      span.textContent = s;
+      await sleep(base + Math.random() * 28);
+    }
+  }
+
+  async function runHero() {
+    let active = true;
+    document.addEventListener('visibilitychange', () => { active = document.visibilityState === 'visible'; });
+
+    while (true) {
+      heroBody.innerHTML = '';
+
+      // ── Round 1: sage board ──────────────────────────────────────
+      const row1 = mkEl('div');
+      const cmd1 = mkEl('span', '');
+      cmd1.style.color = '#EFE7D8';
+      const cur1 = mkEl('span'); cur1.className = 'cursor';
+      row1.appendChild(mkEl('span', '<span style="color:#6B7A3A">$</span> '));
+      row1.appendChild(cmd1); row1.appendChild(cur1);
+      heroBody.appendChild(row1);
+
+      await sleep(380);
+      await typeInto(cmd1, 'sage board');
+      await sleep(260);
+
+      row1.innerHTML = '<span style="color:#6B7A3A">$</span> <span style="color:#EFE7D8">sage board</span><span style="color:#3E3830">   # fleet at a glance</span>';
+      heroBody.appendChild(mkEl('div', '', { height: '8px' }));
+
+      for (const f of fleet) {
+        if (!active) { await sleep(200); continue; }
+        const row = mkEl('div');
+        row.innerHTML =
+          `<span style="color:${f.color}">●</span> ` +
+          `<span style="color:#EFE7D8;display:inline-block;width:68px;">${f.agent}</span>` +
+          `<span style="color:#3E3830;display:inline-block;width:96px;">${f.path}</span>` +
+          `<span style="color:${f.color};display:inline-block;width:50px;">${f.status}</span>` +
+          `<span style="color:#2E2C28;">${f.time} ago</span>`;
+        heroBody.appendChild(row);
+        await sleep(145 + Math.random() * 70);
+      }
+
+      await sleep(280);
+      heroBody.appendChild(mkEl('div', '', { height: '8px' }));
+
+      // ── Round 2: sage territory ──────────────────────────────────
+      const row2 = mkEl('div');
+      const cmd2 = mkEl('span'); cmd2.style.color = '#EFE7D8';
+      const cur2 = mkEl('span'); cur2.className = 'cursor';
+      row2.innerHTML = '<span style="color:#6B7A3A">$</span> ';
+      row2.appendChild(cmd2); row2.appendChild(cur2);
+      heroBody.appendChild(row2);
+
+      await typeInto(cmd2, 'sage territory', 48);
+      await sleep(240);
+
+      row2.innerHTML = '<span style="color:#6B7A3A">$</span> <span style="color:#EFE7D8">sage territory</span><span style="color:#3E3830">   # who owns what</span>';
+      heroBody.appendChild(mkEl('div', '', { height: '6px' }));
+
+      await sleep(110);
+      heroBody.appendChild(mkEl('div', '<span style="color:#3E3830;display:inline-block;width:190px;">src/auth/session.ts</span><span style="color:#4A4438">→ </span><span style="color:#C8972F">agent-1</span>'));
+      await sleep(130);
+      heroBody.appendChild(mkEl('div', '<span style="color:#3E3830;display:inline-block;width:190px;">src/billing/*.ts</span><span style="color:#4A4438">→ </span><span style="color:#C8972F">agent-2</span>'));
+      await sleep(130);
+      heroBody.appendChild(mkEl('div', '<span style="color:#3E3830;display:inline-block;width:190px;">src/editor/</span><span style="color:#4A4438">→ </span><span style="color:#6B7A3A">agent-3 (idle)</span>'));
+      await sleep(130);
+
+      heroBody.appendChild(mkEl('div', '', { height: '12px' }));
+      heroBody.appendChild(mkEl('div', '<span style="color:#6B7A3A">$</span> <span class="cursor"></span>'));
+
+      // Hold before looping
+      await sleep(3200);
+
+      // Fade out
+      heroBody.style.transition = 'opacity 0.45s cubic-bezier(0.4,0,0.2,1)';
+      heroBody.style.opacity = '0';
+      await sleep(460);
+      heroBody.innerHTML = '';
+      heroBody.style.opacity = '1';
+      heroBody.style.transition = '';
+      await sleep(300);
+    }
+  }
+
+  runHero();
+
+})();
+</script>
+
+</body>
+</html>

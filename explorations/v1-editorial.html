@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAGE — Session Awareness &amp; Guidance Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper:       '#F4EFE6',
+            'paper-lt':  '#FBF8F2',
+            'paper-dk':  '#EFE7D8',
+            'paper-xdk': '#E6DDD0',
+            ink:         '#1A1714',
+            gold:        '#B8862F',
+            'gold-h':    '#9E7325',
+            'gold-br':   '#C8972F',
+            olive:       '#6B7A3A',
+          },
+          fontFamily: {
+            display: ['Anton', 'sans-serif'],
+            body:    ['Inter', 'sans-serif'],
+            hand:    ['Caveat', 'cursive'],
+            mono:    ['"JetBrains Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ── Variables ─────────────────────────────────────── */
+    :root {
+      --paper:    #F4EFE6;
+      --paper-lt: #FBF8F2;
+      --paper-dk: #EFE7D8;
+      --ink:      #1A1714;
+      --gold:     #B8862F;
+      --gold-h:   #9E7325;
+      --olive:    #6B7A3A;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Paper grain overlay ────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.038;
+      pointer-events: none;
+      z-index: 9000;
+    }
+
+    /* ── Keyframes ──────────────────────────────────────── */
+    @keyframes floatPlate {
+      0%, 100% { transform: rotate(-1.8deg) translateY(0px); }
+      50%       { transform: rotate(-1.8deg) translateY(-12px); }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Hero entrance ──────────────────────────────────── */
+    .hi { opacity: 0; animation: fadeSlideUp 0.75s ease forwards; }
+    .hi-1 { animation-delay: 0.05s; }
+    .hi-2 { animation-delay: 0.20s; }
+    .hi-3 { animation-delay: 0.36s; }
+    .hi-4 { animation-delay: 0.52s; }
+    .hi-5 { animation-delay: 0.68s; }
+    .hi-6 { animation-delay: 0.84s; }
+    .plate-wrapper {
+      opacity: 0;
+      animation: fadeSlideUp 0.85s ease 0.72s forwards;
+    }
+    .plate-inner {
+      display: inline-block;
+      animation: floatPlate 5.5s ease-in-out 1.6s infinite;
+    }
+
+    /* ── Scroll reveal ──────────────────────────────────── */
+    .rv {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .rv.in { opacity: 1; transform: translateY(0); }
+    .rv.d1 { transition-delay: 0.10s; }
+    .rv.d2 { transition-delay: 0.20s; }
+    .rv.d3 { transition-delay: 0.30s; }
+    .rv.d4 { transition-delay: 0.40s; }
+
+    /* ── Plate frame ────────────────────────────────────── */
+    .plate {
+      background: var(--paper-lt);
+      border: 3px solid var(--ink);
+      padding: 10px;
+      box-shadow: 7px 9px 0 var(--ink);
+      display: inline-block;
+      max-width: 100%;
+    }
+    .plate img { display: block; width: 100%; height: auto; }
+    .plate-cap {
+      font-family: 'Caveat', cursive;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 8px;
+      opacity: 0.65;
+      color: var(--ink);
+    }
+
+    /* ── CTA buttons ────────────────────────────────────── */
+    .btn-gold {
+      display: inline-block;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      background: var(--gold);
+      color: var(--paper-lt);
+      border: 2px solid var(--ink);
+      padding: 11px 28px;
+      box-shadow: 4px 4px 0 var(--ink);
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      white-space: nowrap;
+    }
+    .btn-gold:hover {
+      background: var(--gold-h);
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+    .btn-gold:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    /* ── Clone command box ──────────────────────────────── */
+    .clone-cmd {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--paper-dk);
+      border: 2px solid var(--ink);
+      padding: 11px 16px;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 rgba(26,23,20,0.25);
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    .clone-cmd:hover { background: #DDD5C7; box-shadow: 4px 4px 0 rgba(26,23,20,0.3); }
+    .clone-cmd:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 rgba(26,23,20,0.25); }
+
+    /* ── Sticker cards ──────────────────────────────────── */
+    .card {
+      background: var(--paper-lt);
+      border: 2px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 22px 20px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .card:hover {
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+
+    /* ── Zine divider ───────────────────────────────────── */
+    .zine-div {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 2px 24px;
+      max-width: 72rem;
+      margin: 0 auto;
+    }
+    .zine-div::before,
+    .zine-div::after {
+      content: '';
+      flex: 1;
+      border-top: 2px dashed rgba(26,23,20,0.18);
+    }
+
+    /* ── Step number circles ────────────────────────────── */
+    .step-num {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Caveat', cursive;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .step-num svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .step-num span { position: relative; z-index: 1; }
+
+    /* ── Terminal ───────────────────────────────────────── */
+    .term {
+      background: #1C1915;
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--gold);
+      transform: rotate(0.25deg);
+      font-family: 'JetBrains Mono', monospace;
+      overflow: hidden;
+    }
+    .term-bar {
+      background: #2A2520;
+      border-bottom: 2px solid rgba(255,255,255,0.06);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+    .term-body { padding: 24px 28px; }
+    .tl { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .tl + .tl { margin-top: 0; }
+    .tl-gap { margin-top: 14px; }
+    .tp { color: #C8972F; font-weight: 500; }   /* prompt */
+    .tc { color: #EDE5D4; }                       /* command */
+    .tr { color: rgba(232,224,208,0.45); font-size: 13px; } /* result */
+    .ta { /* annotation in caveat */
+      font-family: 'Caveat', cursive;
+      font-size: 17px;
+      color: rgba(200,185,160,0.55);
+      line-height: 1;
+    }
+    .tg { color: #7BA050; }  /* green ok */
+
+    /* ── Section labels ─────────────────────────────────── */
+    .sec-label {
+      font-family: 'Caveat', cursive;
+      font-size: 19px;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+      margin-bottom: 14px;
+    }
+
+    /* ── Blockquote style ───────────────────────────────── */
+    .zine-quote {
+      border-left: 4px solid var(--gold);
+      padding-left: 20px;
+      font-family: 'Caveat', cursive;
+      font-size: 24px;
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    /* ── Olive check icon ───────────────────────────────── */
+    .olive-icon {
+      color: var(--olive);
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Annotation text ────────────────────────────────── */
+    .ann { font-family: 'Caveat', cursive; color: var(--gold); }
+    .ann-g { font-family: 'Caveat', cursive; color: var(--olive); }
+
+    /* ── Toast ──────────────────────────────────────────── */
+    .toast {
+      font-family: 'Caveat', cursive;
+      font-size: 18px;
+      color: var(--olive);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      min-height: 28px;
+    }
+
+    /* ── Prefers-reduced-motion ─────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .hi, .plate-wrapper {
+        opacity: 1 !important;
+        animation: none !important;
+      }
+      .plate-inner { animation: none !important; }
+      .rv { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .btn-gold { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ████ NAV ████████████████████████████████████████████ -->
+  <nav class="sticky top-0 z-50 bg-paper border-b-2 border-ink" style="background:#F4EFE6;">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-baseline gap-3">
+        <span class="font-display text-ink tracking-widest" style="font-size:28px;">SAGE</span>
+        <span class="ann text-base hidden sm:inline" style="color:#B8862F;">Session Awareness &amp; Guidance Engine</span>
+      </div>
+      <a href="https://github.com/muslewski/agentic-sage"
+         target="_blank" rel="noopener"
+         class="btn-gold" style="font-size:13px; padding:8px 20px;">
+        View on GitHub
+      </a>
+    </div>
+  </nav>
+
+  <!-- ████ HERO ████████████████████████████████████████████ -->
+  <section id="hero" style="background:#EFE7D8; position:relative; overflow:hidden;">
+
+    <!-- corner ornament TL -->
+    <div style="position:absolute;top:24px;left:24px;opacity:0.18;" aria-hidden="true">
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+        <path d="M4 4h28M4 4v28" stroke="#1A1714" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M9 9h14M9 9v14" stroke="#B8862F" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <!-- corner ornament TR -->
+    <div style="position:absolute;top:24px;right:24px;opacity:0.18;" aria-hidden="true">
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+        <path d="M68 4H40M68 4v28" stroke="#1A1714" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M63 9H49M63 9v14" stroke="#B8862F" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+      <div style="display:flex; flex-wrap:wrap; gap:56px; align-items:center; justify-content:space-between;">
+
+        <!-- ─── Left: text ─── -->
+        <div style="flex:1; min-width:280px; max-width:540px;">
+
+          <!-- annotation above wordmark -->
+          <div class="hi hi-1 ann" style="font-size:18px; margin-bottom:6px;">
+            ↓ open-source · zero-dependency · MIT
+          </div>
+
+          <!-- SAGE wordmark -->
+          <div class="hi hi-2">
+            <div class="font-display text-ink" style="font-size:clamp(80px,14vw,160px); line-height:0.92; letter-spacing:0.04em;">SAGE</div>
+          </div>
+
+          <!-- Sub expansion -->
+          <div class="hi hi-3 ann" style="font-size:19px; margin-top:6px; margin-bottom:20px; color:#B8862F;">
+            Session Awareness &amp; Guidance Engine
+          </div>
+
+          <!-- Tagline split: italic body + Anton punchline -->
+          <div class="hi hi-4" style="margin-bottom:20px;">
+            <p style="font-size:clamp(16px,2.4vw,22px); font-style:italic; color:#1A1714; opacity:0.75; margin-bottom:6px;">
+              I don't do the work.
+            </p>
+            <div style="position:relative; display:inline-block; line-height:1;">
+              <span class="font-display text-ink" style="font-size:clamp(42px,7vw,80px); line-height:1;">
+                I&nbsp;JUDGE&nbsp;IT.
+              </span>
+              <!-- hand-drawn wavy underline -->
+              <svg id="hero-ul" style="position:absolute;bottom:-6px;left:0;width:100%;overflow:visible;" viewBox="0 0 400 14" fill="none" preserveAspectRatio="none" aria-hidden="true">
+                <path id="hero-ul-path"
+                  d="M 3 9 Q 40 2, 80 9 Q 120 16, 160 9 Q 200 2, 240 9 Q 280 16, 320 9 Q 360 2, 397 9"
+                  stroke="#B8862F" stroke-width="3" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Sub text -->
+          <div class="hi hi-5" style="font-size:15px; line-height:1.7; color:#1A1714; opacity:0.7; max-width:400px; margin-bottom:28px;">
+            A passive, read-only judge for fleets of parallel AI coding sessions.<br>
+            <span class="ann" style="font-size:18px; opacity:1; color:#B8862F;">One judge per repo.</span>
+          </div>
+
+          <!-- CTAs -->
+          <div class="hi hi-6" style="display:flex; flex-wrap:wrap; align-items:center; gap:14px;">
+            <a href="https://github.com/muslewski/agentic-sage"
+               target="_blank" rel="noopener" class="btn-gold">
+              View on GitHub
+            </a>
+            <button class="clone-cmd"
+                    onclick="copyCMD('hero-toast')"
+                    title="Copy clone command"
+                    aria-label="Copy git clone command to clipboard">
+              <span class="tp">$</span>
+              <span style="color:#1A1714;">git clone …/agentic-sage</span>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="opacity:0.45;margin-left:4px;">
+                <rect x="5" y="5" width="9" height="9" rx="1" stroke="#1A1714" stroke-width="1.5"/>
+                <path d="M3 11H2a1 1 0 01-1-1V2a1 1 0 011-1h8a1 1 0 011 1v1" stroke="#1A1714" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div id="hero-toast" class="toast" style="margin-top:8px;">✓ copied to clipboard!</div>
+
+        </div>
+
+        <!-- ─── Right: framed banner ─── -->
+        <div style="flex:1; min-width:260px; display:flex; justify-content:center; align-items:center;">
+          <div class="plate-wrapper">
+            <div class="plate-inner">
+              <div class="plate" style="transform:rotate(-1.8deg); max-width:440px;">
+                <img src="assets/sage-banner.png"
+                     alt="SAGE mascot — robed sage with sunglasses and staff. Text: I DON'T DO THE WORK. I JUDGE IT."
+                     width="1774" height="887">
+                <p class="plate-cap">the sage sees all &nbsp;·&nbsp; the sage judges all</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- bottom dashed rule -->
+    <div style="padding:0 0 0 0;">
+      <div style="border-top:2px dashed rgba(26,23,20,0.15);"></div>
+    </div>
+  </section>
+
+
+  <!-- ████ SECTION 2 — PROBLEM █████████████████████████████ -->
+  <section id="problem" style="background:#F4EFE6; padding:88px 0;">
+    <div class="max-w-5xl mx-auto px-6">
+
+      <div class="rv sec-label">the problem —</div>
+
+      <div class="rv d1" style="margin-bottom:16px;">
+        <h2 class="font-display text-ink" style="font-size:clamp(38px,8vw,82px); line-height:0.96; letter-spacing:0.01em;">
+          Eight agents,<br>one repo,<br>
+          <span style="position:relative; display:inline-block;">
+            zero&nbsp;coordination.
+            <svg id="prob-ul" style="position:absolute;bottom:-4px;left:0;width:100%;overflow:visible;" viewBox="0 0 800 10" fill="none" preserveAspectRatio="none" aria-hidden="true">
+              <path id="prob-ul-path"
+                d="M 3 5 Q 100 1, 200 6 Q 300 11, 400 5 Q 500 1, 600 6 Q 700 11, 797 5"
+                stroke="#B8862F" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.55"/>
+            </svg>
+          </span>
+        </h2>
+      </div>
+
+      <div class="rv d2" style="font-size:15px; line-height:1.75; color:#1A1714; opacity:0.70; max-width:560px; margin-bottom:56px;">
+        Run a fleet of coding agents at once and they collide — same files, duplicated work, lost context across sessions, no shared source of truth. Nobody is watching the fleet as a whole.
+      </div>
+
+      <!-- 3-col problem cards -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:28px;">
+
+        <div class="rv d2">
+          <div style="position:relative; padding-left:16px;">
+            <div class="font-hand text-gold" style="position:absolute;top:-8px;left:-8px;font-size:64px;opacity:0.12;line-height:1;user-select:none;" aria-hidden="true">01</div>
+            <div style="width:32px;height:2px;background:#B8862F;margin-bottom:14px;"></div>
+            <h3 style="font-weight:600;margin-bottom:8px;">Colliding writes</h3>
+            <p style="font-size:14px;line-height:1.7;opacity:0.68;">
+              Eight sessions touching the same file concurrently. No one knows who wrote what last.
+            </p>
+          </div>
+        </div>
+
+        <div class="rv d3">
+          <div style="position:relative; padding-left:16px;">
+            <div class="font-hand text-gold" style="position:absolute;top:-8px;left:-8px;font-size:64px;opacity:0.12;line-height:1;user-select:none;" aria-hidden="true">02</div>
+            <div style="width:32px;height:2px;background:#B8862F;margin-bottom:14px;"></div>
+            <h3 style="font-weight:600;margin-bottom:8px;">Duplicated work</h3>
+            <p style="font-size:14px;line-height:1.7;opacity:0.68;">
+              Two agents solve the same sub-problem in parallel. Neither knows the other exists.
+            </p>
+          </div>
+        </div>
+
+        <div class="rv d4">
+          <div style="position:relative; padding-left:16px;">
+            <div class="font-hand text-gold" style="position:absolute;top:-8px;left:-8px;font-size:64px;opacity:0.12;line-height:1;user-select:none;" aria-hidden="true">03</div>
+            <div style="width:32px;height:2px;background:#B8862F;margin-bottom:14px;"></div>
+            <h3 style="font-weight:600;margin-bottom:8px;">No shared truth</h3>
+            <p style="font-size:14px;line-height:1.7;opacity:0.68;">
+              Lost context across sessions, zero backlog visibility. Nobody watching the fleet as a whole.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ████ divider ████████████████████████████████████████ -->
+  <div style="padding:2px 0; background:#F4EFE6;">
+    <div class="zine-div">
+      <span class="ann" style="font-size:16px;opacity:0.45;">✦</span>
+    </div>
+  </div>
+
+
+  <!-- ████ SECTION 3 — WHAT SAGE IS ████████████████████████ -->
+  <section id="what-is" style="background:#FBF8F2; padding:88px 0;">
+    <div class="max-w-6xl mx-auto px-6">
+      <div style="display:flex; flex-wrap:wrap; gap:64px; align-items:flex-start;">
+
+        <!-- Left: text -->
+        <div style="flex:1; min-width:280px; max-width:480px;">
+
+          <div class="rv sec-label">what it is —</div>
+
+          <div class="rv d1" style="position:relative; margin-bottom:28px;">
+            <h2 class="font-display text-ink" style="font-size:clamp(34px,6vw,68px); line-height:0.95; letter-spacing:0.01em;">
+              A judge,<br>not a boss.
+            </h2>
+            <!-- arrow decoration -->
+            <div style="position:absolute;top:8px;right:-8px;" aria-hidden="true">
+              <svg id="arrow-1" width="68" height="72" viewBox="0 0 68 72" fill="none">
+                <path id="arrow-1-stem"
+                  d="M 12 66 Q 24 32, 60 10"
+                  stroke="#B8862F" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                <path id="arrow-1-head"
+                  d="M 52 6 L 62 10 L 55 19"
+                  stroke="#B8862F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="rv d2" style="font-size:15px; line-height:1.75; color:#1A1714; max-width:420px;">
+            <p style="margin-bottom:12px; opacity:0.75;">
+              SAGE sits beside your fleet and watches every session. Ask it anything — who's touching what, where two branches diverged, what the backlog says — and it answers.
+            </p>
+            <p style="margin-bottom:12px; opacity:0.75;">
+              It never edits your code, never spawns agents, never blocks an action.
+            </p>
+            <p style="font-weight:600; font-style:italic; opacity:0.9;">Passive by design.</p>
+          </div>
+
+          <div class="rv d3 zine-quote" style="margin-top:28px; margin-bottom:20px;">
+            "Advisor, not a boss —<br>just the truth."
+          </div>
+
+          <div class="rv d4">
+            <span class="ann-g" style="font-size:18px;">← psst: it literally cannot write to your repo</span>
+          </div>
+
+        </div>
+
+        <!-- Right: conventions image -->
+        <div style="flex:1; min-width:260px; display:flex; justify-content:center;">
+          <div class="rv d2">
+            <div class="plate" style="transform:rotate(1.3deg); max-width:380px;">
+              <img src="assets/sage-conventions.png"
+                   alt="SAGE controller conventions diagram"
+                   width="800" height="600">
+              <p class="plate-cap">fig. 1 — controller conventions</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ████ divider ████████████████████████████████████████ -->
+  <div style="padding:2px 0; background:#FBF8F2;">
+    <div class="zine-div">
+      <span class="ann" style="font-size:16px;opacity:0.45;">✦</span>
+    </div>
+  </div>
+
+
+  <!-- ████ SECTION 4 — HOW IT WORKS ████████████████████████ -->
+  <section id="how-it-works" style="background:#EFE7D8; padding:88px 0;">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="rv sec-label">how it works —</div>
+      <div class="rv d1" style="margin-bottom:56px;">
+        <h2 class="font-display text-ink" style="font-size:clamp(32px,5.5vw,60px); line-height:0.95; letter-spacing:0.01em;">
+          Up in four steps.
+        </h2>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+        <!-- Steps list -->
+        <div style="flex:1; min-width:280px; display:flex; flex-direction:column; gap:20px;">
+
+          <!-- Step 1 -->
+          <div class="rv card" style="transform:rotate(-0.5deg);">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num" style="color:#B8862F;">
+                <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                  <circle cx="22" cy="22" r="19" stroke="#B8862F" stroke-width="1.8" stroke-dasharray="5 3" opacity="0.55"/>
+                </svg>
+                <span>1</span>
+              </div>
+              <div>
+                <div style="font-weight:600; font-size:15px; margin-bottom:6px;">Clone</div>
+                <code style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#B8862F; background:rgba(184,134,47,0.1); padding:3px 8px; border-radius:3px; word-break:break-all;">
+                  git clone https://github.com/muslewski/agentic-sage
+                </code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="rv d1 card" style="transform:rotate(0.4deg);">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num" style="color:#B8862F;">
+                <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                  <circle cx="22" cy="22" r="19" stroke="#B8862F" stroke-width="1.8" stroke-dasharray="5 3" opacity="0.55"/>
+                </svg>
+                <span>2</span>
+              </div>
+              <div>
+                <div style="font-weight:600; font-size:15px; margin-bottom:6px;">Install</div>
+                <code style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#B8862F; background:rgba(184,134,47,0.1); padding:3px 8px; border-radius:3px;">
+                  node install.mjs
+                </code>
+                <p style="font-size:13px; margin-top:8px; opacity:0.60; line-height:1.5;">Wires the hook; touches nothing else.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="rv d2 card" style="transform:rotate(-0.3deg);">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num" style="color:#B8862F;">
+                <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                  <circle cx="22" cy="22" r="19" stroke="#B8862F" stroke-width="1.8" stroke-dasharray="5 3" opacity="0.55"/>
+                </svg>
+                <span>3</span>
+              </div>
+              <div>
+                <div style="font-weight:600; font-size:15px; margin-bottom:6px;">Enable</div>
+                <code style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#B8862F; background:rgba(184,134,47,0.1); padding:3px 8px; border-radius:3px;">
+                  sage on
+                </code>
+                <p style="font-size:13px; margin-top:8px; opacity:0.60; line-height:1.5;">Nothing runs until you flip this switch.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="rv d3 card" style="transform:rotate(0.6deg);">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num" style="color:#6B7A3A;">
+                <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                  <circle cx="22" cy="22" r="19" stroke="#6B7A3A" stroke-width="1.8" stroke-dasharray="5 3" opacity="0.55"/>
+                </svg>
+                <span>4</span>
+              </div>
+              <div>
+                <div style="font-weight:600; font-size:15px; margin-bottom:6px;">Verify</div>
+                <code style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#6B7A3A; background:rgba(107,122,58,0.1); padding:3px 8px; border-radius:3px;">
+                  sage doctor
+                </code>
+                <p style="font-size:13px; margin-top:8px; opacity:0.60; line-height:1.5;">Confirms your setup is wired correctly.</p>
+                <div class="ann-g" style="font-size:18px; margin-top:6px;">✓ you're ready</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Setup image -->
+        <div style="flex:1; min-width:260px; display:flex; justify-content:center; align-items:flex-start;">
+          <div class="rv d2">
+            <div class="plate" style="transform:rotate(-1.2deg); max-width:400px;">
+              <img src="assets/sage-setup.png"
+                   alt="SAGE four-step setup diagram: Clone, Install, Enable, Doctor"
+                   width="800" height="600">
+              <p class="plate-cap">fig. 2 — four-step setup</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ████ divider ████████████████████████████████████████ -->
+  <div style="padding:2px 0; background:#EFE7D8;">
+    <div class="zine-div">
+      <span class="ann" style="font-size:16px;opacity:0.45;">✦</span>
+    </div>
+  </div>
+
+
+  <!-- ████ SECTION 5 — PILLARS █████████████████████████████ -->
+  <section id="pillars" style="background:#F4EFE6; padding:88px 0;">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="rv sec-label">six pillars —</div>
+      <div class="rv d1" style="margin-bottom:56px;">
+        <h2 class="font-display text-ink" style="font-size:clamp(32px,5.5vw,60px); line-height:0.95;">
+          Built different.
+        </h2>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:22px;">
+
+        <div class="rv card" style="transform:rotate(-0.8deg);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span class="olive-icon">◎</span>
+            <div>
+              <div style="font-weight:600; margin-bottom:6px;">Passive by design</div>
+              <p style="font-size:13px; line-height:1.65; opacity:0.68;">Watches and answers; never edits, spawns, or blocks.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rv d1 card" style="transform:rotate(0.5deg);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span class="olive-icon">◎</span>
+            <div>
+              <div style="font-weight:600; margin-bottom:6px;">Read-only &amp; safe</div>
+              <p style="font-size:13px; line-height:1.65; opacity:0.68;">It cannot change your repo. Ever.</p>
+              <div class="ann" style="font-size:17px; margin-top:6px;">sworn to read</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rv d2 card" style="transform:rotate(-0.3deg);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span class="olive-icon">◎</span>
+            <div>
+              <div style="font-weight:600; margin-bottom:6px;">Zero-dependency</div>
+              <p style="font-size:13px; line-height:1.65; opacity:0.68;">One Node CLI, no install bloat. Clone and run.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rv card" style="transform:rotate(0.7deg);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span class="olive-icon">◎</span>
+            <div>
+              <div style="font-weight:600; margin-bottom:6px;">Default-off</div>
+              <p style="font-size:13px; line-height:1.65; opacity:0.68;">
+                Installing changes nothing until <code style="font-family:'JetBrains Mono',monospace; font-size:11px; background:#EFE7D8; padding:1px 5px;">sage on</code>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rv d1 card" style="transform:rotate(-0.6deg);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span class="olive-icon">◎</span>
+            <div>
+              <div style="font-weight:600; margin-bottom:6px;">Fail-open</div>
+              <p style="font-size:13px; line-height:1.65; opacity:0.68;">Any error in the optional guard allows the action. Never in your way.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rv d2 card" style="transform:rotate(0.4deg);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span class="olive-icon">◎</span>
+            <div>
+              <div style="font-weight:600; margin-bottom:6px;">Hot-path-cheap</div>
+              <p style="font-size:13px; line-height:1.65; opacity:0.68;">When idle the hook short-circuits instantly. Zero cost.</p>
+              <div class="ann" style="font-size:17px; margin-top:6px;">literally free when idle</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ████ divider ████████████████████████████████████████ -->
+  <div style="padding:2px 0; background:#F4EFE6;">
+    <div class="zine-div">
+      <span class="ann" style="font-size:16px;opacity:0.45;">✦</span>
+    </div>
+  </div>
+
+
+  <!-- ████ SECTION 6 — TERMINAL PEEK ██████████████████████ -->
+  <section id="peek" style="background:#FBF8F2; padding:88px 0;">
+    <div class="max-w-4xl mx-auto px-6">
+
+      <div class="rv sec-label">a peek —</div>
+      <div class="rv d1" style="margin-bottom:48px;">
+        <h2 class="font-display text-ink" style="font-size:clamp(30px,5vw,54px); line-height:0.95;">
+          Ask it anything.
+        </h2>
+      </div>
+
+      <!-- terminal window -->
+      <div class="rv d2 term">
+        <div class="term-bar">
+          <div class="dot"></div>
+          <div class="dot" style="opacity:0.3;"></div>
+          <div class="dot" style="opacity:0.3;"></div>
+          <span class="font-hand" style="margin-left:10px; font-size:15px; color:rgba(200,185,160,0.45);">sage — fleet console</span>
+        </div>
+        <div class="term-body">
+          <div class="tl">
+            <span class="tp">$</span>
+            <span class="tc">sage board</span>
+            <span class="ta"># the whole fleet at a glance</span>
+          </div>
+          <div class="tl" style="padding-left:16px; margin-bottom:10px;">
+            <span style="color:rgba(232,224,208,0.42); font-size:13px;">→ 8 sessions active &nbsp;·&nbsp; 3 writing &nbsp;·&nbsp; 5 reading</span>
+          </div>
+
+          <div class="tl tl-gap">
+            <span class="tp">$</span>
+            <span class="tc">sage territory</span>
+            <span class="ta"># who's touching which files</span>
+          </div>
+          <div class="tl" style="padding-left:16px; margin-bottom:10px;">
+            <span style="color:rgba(232,224,208,0.42); font-size:13px;">→ src/auth.ts [session-3, session-7] &nbsp;<span style="color:#C8972F;">⚠ collision risk</span></span>
+          </div>
+
+          <div class="tl tl-gap">
+            <span class="tp">$</span>
+            <span class="tc">sage backlog</span>
+            <span class="ta"># what each session claimed</span>
+          </div>
+          <div class="tl" style="padding-left:16px; margin-bottom:10px;">
+            <span style="color:rgba(232,224,208,0.42); font-size:13px;">→ session-1: feat/payments &nbsp;·&nbsp; session-2: fix/auth-loop &nbsp;·&nbsp; …</span>
+          </div>
+
+          <div class="tl tl-gap">
+            <span class="tp">$</span>
+            <span class="tc">sage doctor</span>
+            <span class="ta"># is my setup valid?</span>
+          </div>
+          <div class="tl" style="padding-left:16px;">
+            <span class="tg" style="font-size:13px;">✓ hook wired &nbsp;&nbsp;✓ sage on &nbsp;&nbsp;✓ fleet visible &nbsp;&nbsp;✓ all good</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rv d3" style="text-align:center; margin-top:20px;">
+        <span class="ann" style="font-size:19px;">↑ zero-dep, one CLI, instant answers from any session</span>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ████ divider ████████████████████████████████████████ -->
+  <div style="padding:2px 0; background:#FBF8F2;">
+    <div class="zine-div">
+      <span class="ann" style="font-size:16px;opacity:0.45;">✦</span>
+    </div>
+  </div>
+
+
+  <!-- ████ SECTION 7 — FINAL CTA ███████████████████████████ -->
+  <section id="cta" style="background:#EFE7D8; padding:96px 0;">
+    <div class="max-w-4xl mx-auto px-6" style="text-align:center;">
+
+      <!-- decorative ornament -->
+      <div class="rv" aria-hidden="true" style="margin-bottom:24px;">
+        <svg class="mx-auto" width="160" height="20" viewBox="0 0 160 20" fill="none" style="display:block;margin:0 auto;">
+          <path id="cta-ornament"
+            d="M 4 10 Q 40 3, 80 10 Q 120 17, 156 10"
+            stroke="#B8862F" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.35"/>
+          <circle cx="80" cy="10" r="3" fill="#B8862F" opacity="0.4"/>
+        </svg>
+      </div>
+
+      <div class="rv d1" style="margin-bottom:16px;">
+        <h2 class="font-display text-ink" style="font-size:clamp(40px,9vw,92px); line-height:0.92; letter-spacing:0.01em;">
+          Bring a judge<br>to your fleet.
+        </h2>
+      </div>
+
+      <div class="rv d2" style="font-size:15px; line-height:1.75; opacity:0.70; max-width:440px; margin:0 auto 40px;">
+        One command. Zero dependencies. Default-off.<br>Your fleet, finally coordinated.
+      </div>
+
+      <!-- Clone command -->
+      <div class="rv d3" style="display:flex; justify-content:center; margin-bottom:8px;">
+        <button class="clone-cmd"
+                onclick="copyCMD('cta-toast')"
+                title="Copy clone command"
+                aria-label="Copy git clone command"
+                style="max-width:560px; width:100%;">
+          <span class="tp">$</span>
+          <span style="color:#1A1714; flex:1; text-align:left;">
+            git clone https://github.com/muslewski/agentic-sage
+          </span>
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="opacity:0.45; flex-shrink:0;">
+            <rect x="5" y="5" width="9" height="9" rx="1" stroke="#1A1714" stroke-width="1.5"/>
+            <path d="M3 11H2a1 1 0 01-1-1V2a1 1 0 011-1h8a1 1 0 011 1v1" stroke="#1A1714" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div id="cta-toast" class="toast" style="margin-bottom:32px;">✓ copied!</div>
+
+      <div class="rv d4">
+        <a href="https://github.com/muslewski/agentic-sage"
+           target="_blank" rel="noopener" class="btn-gold" style="font-size:16px; padding:13px 36px;">
+          View on GitHub
+        </a>
+      </div>
+
+      <!-- lower ornament -->
+      <div class="rv" style="margin-top:72px;" aria-hidden="true">
+        <svg width="200" height="16" viewBox="0 0 200 16" fill="none" style="display:block;margin:0 auto;">
+          <path id="cta-ornament-2"
+            d="M 8 8 Q 50 2, 100 8 Q 150 14, 192 8"
+            stroke="#B8862F" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.3"/>
+        </svg>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ████ FOOTER ██████████████████████████████████████████ -->
+  <footer style="background:#1A1714; padding:32px 24px;">
+    <div class="max-w-6xl mx-auto" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px;">
+      <div class="font-display" style="font-size:26px; color:#B8862F; letter-spacing:0.12em;">SAGE</div>
+      <p style="font-size:13px; color:#F4EFE6; opacity:0.45; text-align:center; font-family:'Inter',sans-serif;">
+        Session Awareness &amp; Guidance Engine &nbsp;·&nbsp; MIT &nbsp;·&nbsp; one judge per repo
+      </p>
+      <a href="https://github.com/muslewski/agentic-sage"
+         target="_blank" rel="noopener"
+         class="font-hand" style="font-size:20px; color:#B8862F; text-decoration:none; transition:color 0.15s ease;"
+         onmouseover="this.style.color='#C8972F'" onmouseout="this.style.color='#B8862F'">
+        GitHub →
+      </a>
+    </div>
+  </footer>
+
+
+  <!-- ████ SCRIPT ██████████████████████████████████████████ -->
+  <script>
+    // ── Copy command ──────────────────────────────────────
+    function copyCMD(toastId) {
+      const cmd = 'git clone https://github.com/muslewski/agentic-sage';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(cmd).catch(() => {});
+      }
+      const t = document.getElementById(toastId);
+      if (t) {
+        t.style.opacity = '1';
+        setTimeout(() => { t.style.opacity = '0'; }, 2400);
+      }
+    }
+
+    // ── SVG stroke-draw setup using getTotalLength ────────
+    function initStrokeDraw(pathEl) {
+      if (!pathEl) return;
+      try {
+        const len = pathEl.getTotalLength();
+        pathEl.style.strokeDasharray  = len;
+        pathEl.style.strokeDashoffset = len;
+        pathEl.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(0.4,0,0.2,1)';
+      } catch(e) {
+        // SVG not in DOM yet or browser doesn't support getTotalLength
+      }
+    }
+
+    const strokePaths = [
+      { id: 'hero-ul-path',    delay: 900  },
+      { id: 'prob-ul-path',    delay: 0    },
+      { id: 'arrow-1-stem',    delay: 0    },
+      { id: 'arrow-1-head',    delay: 250  },
+      { id: 'cta-ornament',    delay: 0    },
+      { id: 'cta-ornament-2',  delay: 200  },
+    ];
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReduced) {
+
+      // Init all stroke paths (dasharray = total length, dashoffset = hidden)
+      strokePaths.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        initStrokeDraw(el);
+      });
+
+      // Hero underline draws after entrance animation
+      setTimeout(() => {
+        const heroPath = document.getElementById('hero-ul-path');
+        if (heroPath) heroPath.style.strokeDashoffset = '0';
+      }, 900);
+
+      // ── Scroll reveal (IntersectionObserver) ─────────────
+      const rvObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            rvObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
+
+      document.querySelectorAll('.rv').forEach(el => rvObserver.observe(el));
+
+      // ── SVG stroke-draw on scroll ─────────────────────────
+      const svgObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          // Find stroke paths within or near this element
+          const section = entry.target;
+          strokePaths.forEach(({ id, delay }) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            // Check if the path is inside or close to this section
+            if (section.contains(el) || section.querySelector('#' + id)) {
+              setTimeout(() => {
+                el.style.strokeDashoffset = '0';
+              }, delay);
+            }
+          });
+          svgObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('section').forEach(el => svgObserver.observe(el));
+
+      // Also observe the CTA section for its ornaments
+      const ctaSec = document.getElementById('cta');
+      if (ctaSec) svgObserver.observe(ctaSec);
+
+    } else {
+      // Reduced motion: show everything immediately
+      document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
+      strokePaths.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.strokeDasharray  = '9999';
+          el.style.strokeDashoffset = '0';
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

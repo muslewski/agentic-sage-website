@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAGE — Session Awareness &amp; Guidance Engine</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#FBF8F2',
+            ink: '#1A1714',
+            gold: '#B8862F',
+            'gold-hover': '#9E7325',
+            cream: '#F4EFE6',
+            olive: '#6B7A3A',
+          },
+          fontFamily: {
+            display: ['Archivo', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      background-color: #FBF8F2;
+      color: #1A1714;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ─── Scroll progress bar ─── */
+    #prog {
+      position: fixed;
+      top: 0; left: 0;
+      width: 0%;
+      height: 1px;
+      background: #B8862F;
+      z-index: 300;
+      pointer-events: none;
+      transition: width 0.08s linear;
+    }
+
+    /* ─── Navigation ─── */
+    #nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 200;
+      background: rgba(251, 248, 242, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(26, 23, 20, 0.07);
+    }
+
+    .nav-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .wordmark {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-size: 1.0625rem;
+      letter-spacing: -0.025em;
+      color: #1A1714;
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    /* ─── Page container ─── */
+    .wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
+    /* ─── Eyebrow labels ─── */
+    .eyebrow {
+      display: block;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #B8862F;
+    }
+
+    /* ─── Hairline rules ─── */
+    .rule {
+      display: block;
+      border: none;
+      border-top: 1px solid rgba(26, 23, 20, 0.09);
+      width: 100%;
+    }
+
+    /* ─── Display headlines ─── */
+    .headline {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      line-height: 0.94;
+      letter-spacing: -0.03em;
+      color: #1A1714;
+    }
+
+    /* ─── Body copy ─── */
+    .body {
+      font-size: 0.9375rem;
+      line-height: 1.75;
+      color: rgba(26, 23, 20, 0.62);
+    }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.775rem;
+      font-weight: 500;
+      letter-spacing: 0.025em;
+      padding: 0.675rem 1.35rem;
+      border: 1px solid;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .btn-primary {
+      background: #1A1714;
+      color: #FBF8F2;
+      border-color: #1A1714;
+    }
+
+    .btn-primary:hover {
+      background: #B8862F;
+      border-color: #B8862F;
+    }
+
+    /* ─── Clone command copy block ─── */
+    .cmd-block {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.725rem;
+      color: #1A1714;
+      background: transparent;
+      border: 1px solid rgba(26, 23, 20, 0.17);
+      padding: 0.675rem 1.125rem;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.18s ease;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .cmd-block:hover { border-color: #B8862F; }
+
+    .cmd-dollar { color: #B8862F; flex-shrink: 0; }
+
+    .cmd-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cmd-icon {
+      margin-left: auto;
+      flex-shrink: 0;
+      opacity: 0.28;
+      transition: opacity 0.18s ease;
+    }
+
+    .cmd-block:hover .cmd-icon { opacity: 0.8; }
+
+    .cmd-ok {
+      display: none;
+      margin-left: auto;
+      flex-shrink: 0;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6B7A3A;
+    }
+
+    /* ─── Problem stat (count-up) ─── */
+    .stat {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-size: clamp(4.5rem, 12vw, 6.5rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: #1A1714;
+    }
+
+    .stat-unit {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(26, 23, 20, 0.35);
+      display: block;
+      margin-top: 0.5rem;
+    }
+
+    /* ─── Mascot frame ─── */
+    .mascot-frame {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(26, 23, 20, 0.1);
+    }
+
+    .mascot-frame::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: #B8862F;
+    }
+
+    .mascot-caption {
+      margin-top: 0.625rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(26, 23, 20, 0.32);
+    }
+
+    /* ─── Setup steps ─── */
+    .step {
+      border-top: 1px solid rgba(26, 23, 20, 0.09);
+      padding-top: 1.375rem;
+      padding-bottom: 1.375rem;
+    }
+
+    .step-n {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 900;
+      font-size: 2.75rem;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: rgba(26, 23, 20, 0.055);
+      display: block;
+      margin-bottom: 0.875rem;
+    }
+
+    .step-title {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: -0.01em;
+      color: #1A1714;
+      margin-bottom: 0.4rem;
+    }
+
+    .step-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.675rem;
+      color: rgba(26, 23, 20, 0.5);
+      display: block;
+    }
+
+    .step-note {
+      font-size: 0.675rem;
+      color: rgba(26, 23, 20, 0.35);
+      line-height: 1.5;
+      margin-top: 0.25rem;
+    }
+
+    /* ─── Pillars ─── */
+    .pillar {
+      border-top: 1px solid rgba(26, 23, 20, 0.09);
+      padding-top: 1.5rem;
+      padding-bottom: 1.625rem;
+    }
+
+    .pillar-tick {
+      display: block;
+      width: 18px;
+      height: 1px;
+      background: #B8862F;
+      margin-bottom: 1.125rem;
+    }
+
+    .pillar-name {
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: -0.01em;
+      color: #1A1714;
+      margin-bottom: 0.4375rem;
+    }
+
+    .pillar-desc {
+      font-size: 0.8rem;
+      line-height: 1.65;
+      color: rgba(26, 23, 20, 0.58);
+    }
+
+    code.inline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8em;
+      background: rgba(184, 134, 47, 0.1);
+      padding: 0.1em 0.3em;
+    }
+
+    /* ─── Terminal ─── */
+    .terminal {
+      background: #1A1714;
+      border: 1px solid rgba(255,255,255,0.04);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 2.3;
+      color: rgba(251, 248, 242, 0.82);
+      padding: 2rem 2.5rem;
+      overflow-x: auto;
+    }
+
+    .t-dollar { color: #B8862F; }
+    .t-cmd { color: rgba(251, 248, 242, 0.9); }
+    .t-comment { color: rgba(251, 248, 242, 0.27); }
+
+    /* ─── Scroll-reveal (motion-safe only) ─── */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal.in { opacity: 1; transform: none; }
+
+      .d1 { transition-delay: 0.09s; }
+      .d2 { transition-delay: 0.18s; }
+      .d3 { transition-delay: 0.27s; }
+      .d4 { transition-delay: 0.36s; }
+      .d5 { transition-delay: 0.45s; }
+      .d6 { transition-delay: 0.54s; }
+
+      .hero-in {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.78s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .hero-in.go { opacity: 1; transform: none; }
+
+      .hd0 { transition-delay: 0.04s; }
+      .hd1 { transition-delay: 0.18s; }
+      .hd2 { transition-delay: 0.34s; }
+      .hd3 { transition-delay: 0.50s; }
+      .hd4 { transition-delay: 0.66s; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .hero-in {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
+    /* ─── Responsive tweaks ─── */
+    @media (max-width: 640px) {
+      .wrap { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .nav-inner { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .terminal { padding: 1.5rem 1.25rem; font-size: 0.68rem; line-height: 2; }
+    }
+  </style>
+</head>
+<body class="bg-canvas text-ink overflow-x-hidden">
+
+  <!-- Scroll progress bar -->
+  <div id="prog" aria-hidden="true"></div>
+
+  <!-- ══ NAVIGATION ══ -->
+  <nav id="nav" aria-label="Site navigation">
+    <div class="nav-inner">
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="#" class="wordmark">SAGE</a>
+        <span class="eyebrow hidden sm:block" style="color: rgba(26,23,20,0.4); letter-spacing: 0.1em;">
+          Session Awareness &amp; Guidance Engine
+        </span>
+      </div>
+      <a href="https://github.com/muslewski/agentic-sage"
+         target="_blank" rel="noopener noreferrer"
+         class="btn btn-primary flex-shrink-0">
+        GitHub ↗
+      </a>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 1 — HERO
+  ══════════════════════════════════════════════════ -->
+  <section aria-labelledby="hero-heading" style="padding-top: 8.5rem; padding-bottom: 5.5rem;">
+    <div class="wrap">
+
+      <span class="eyebrow hero-in hd0">Session Awareness &amp; Guidance Engine</span>
+
+      <h1 id="hero-heading"
+          class="headline hero-in hd1"
+          style="font-size: clamp(3rem, 9.5vw, 6.75rem); margin-top: 1.875rem;">
+        I don't do<br>
+        the work.<br>
+        <span style="color: #B8862F;">I judge it.</span>
+      </h1>
+
+      <p class="body hero-in hd2" style="max-width: 38ch; margin-top: 2rem;">
+        A passive, read-only judge for fleets of parallel AI coding sessions.
+        One judge per repo.
+      </p>
+
+      <div class="hero-in hd3"
+           style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: 2.5rem;">
+        <a href="https://github.com/muslewski/agentic-sage"
+           target="_blank" rel="noopener noreferrer"
+           class="btn btn-primary">
+          View on GitHub ↗
+        </a>
+        <button class="cmd-block"
+                onclick="copyCmd(this, 'git clone https://github.com/muslewski/agentic-sage')"
+                aria-label="Copy git clone command">
+          <span class="cmd-dollar" aria-hidden="true">$</span>
+          <span class="cmd-text">git clone https://github.com/muslewski/agentic-sage</span>
+          <svg class="cmd-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="8.5" height="8.5" stroke="#1A1714" stroke-width="0.85"/>
+            <path d="M1 9.5V1H9.5" stroke="#1A1714" stroke-width="0.85"/>
+          </svg>
+          <span class="cmd-ok" aria-live="polite">Copied</span>
+        </button>
+      </div>
+
+      <hr class="rule hero-in hd4" style="margin-top: 5rem;">
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 2 — THE PROBLEM
+  ══════════════════════════════════════════════════ -->
+  <section aria-labelledby="problem-heading" style="padding: 5.5rem 0;">
+    <div class="wrap">
+
+      <span class="eyebrow reveal">01 — The Problem</span>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 2rem; align-items: start;"
+           class="max-md:!grid-cols-1 max-md:!gap-10">
+
+        <div>
+          <h2 id="problem-heading"
+              class="headline reveal d1"
+              style="font-size: clamp(1.875rem, 4.5vw, 3rem);">
+            Eight agents,<br>one repo,<br>zero coordination.
+          </h2>
+        </div>
+
+        <div>
+          <!-- Count-up stat -->
+          <div class="reveal d2" style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1.5rem;">
+            <span class="stat" data-target="8" aria-label="8 agents">0</span>
+            <span class="stat-unit">agents</span>
+          </div>
+
+          <p class="body reveal d3" style="max-width: 34ch;">
+            Run a fleet of coding agents at once and they collide — same files, duplicated work,
+            lost context across sessions, no shared source of truth. Nobody is watching the fleet
+            as a whole.
+          </p>
+        </div>
+      </div>
+
+      <hr class="rule" style="margin-top: 5rem;">
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 3 — WHAT SAGE IS  (mascot lives here)
+  ══════════════════════════════════════════════════ -->
+  <section aria-labelledby="what-heading" style="padding: 5.5rem 0;">
+    <div class="wrap">
+
+      <span class="eyebrow reveal">02 — What It Is</span>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; margin-top: 2rem; align-items: center;"
+           class="max-lg:!grid-cols-1 max-lg:!gap-12">
+
+        <!-- Copy -->
+        <div>
+          <h2 id="what-heading"
+              class="headline reveal d1"
+              style="font-size: clamp(1.875rem, 4.5vw, 3rem);">
+            A judge,<br>not a boss.
+          </h2>
+
+          <p class="body reveal d2" style="max-width: 36ch; margin-top: 1.75rem;">
+            SAGE sits beside your fleet and watches every session. Ask it anything —
+            who's touching what, where two branches diverged, what the backlog says —
+            and it answers.
+          </p>
+
+          <p class="body reveal d3" style="max-width: 36ch; margin-top: 1rem;">
+            It never edits your code, never spawns agents, never blocks an action.
+            Passive by design.
+          </p>
+
+          <p class="reveal d4"
+             style="margin-top: 1.625rem; font-size: 0.8125rem; font-style: italic; color: #B8862F; letter-spacing: 0.01em;">
+            Advisor, not a boss — just the truth.
+          </p>
+        </div>
+
+        <!-- Mascot — used once, tastefully framed -->
+        <div class="reveal d2">
+          <div class="mascot-frame">
+            <img src="assets/sage-banner.png"
+                 alt="SAGE mascot: a robed sage in sunglasses holding a staff, beside the text "I DON'T DO THE WORK. I JUDGE IT.""
+                 style="width: 100%; height: auto; display: block; max-height: 300px; object-fit: cover; object-position: center 30%;">
+          </div>
+          <span class="mascot-caption">The Judge</span>
+        </div>
+      </div>
+
+      <hr class="rule" style="margin-top: 5rem;">
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 4 — HOW IT WORKS  (4 steps)
+  ══════════════════════════════════════════════════ -->
+  <section aria-labelledby="setup-heading" style="padding: 5.5rem 0;">
+    <div class="wrap">
+
+      <span class="eyebrow reveal">03 — Setup</span>
+
+      <h2 id="setup-heading"
+          class="headline reveal d1"
+          style="font-size: clamp(1.875rem, 4vw, 2.625rem); margin-top: 1.75rem;">
+        Four commands<br>to wire the judge.
+      </h2>
+
+      <!-- Steps grid -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 3.5rem;"
+           class="max-md:!grid-cols-2 max-sm:!grid-cols-1">
+
+        <div class="step reveal d1" style="padding-right: 2rem;">
+          <span class="step-n" aria-hidden="true">01</span>
+          <p class="step-title">Clone</p>
+          <code class="step-code">git clone …</code>
+        </div>
+
+        <div class="step reveal d2" style="padding-right: 2rem; padding-left: 0; border-left: none;">
+          <span class="step-n" aria-hidden="true">02</span>
+          <p class="step-title">Install</p>
+          <code class="step-code">node install.mjs</code>
+          <p class="step-note">wires the hook; touches nothing else</p>
+        </div>
+
+        <div class="step reveal d3" style="padding-right: 2rem; padding-left: 0; border-left: none;">
+          <span class="step-n" aria-hidden="true">03</span>
+          <p class="step-title">Enable</p>
+          <code class="step-code">sage on</code>
+          <p class="step-note">nothing runs until you do</p>
+        </div>
+
+        <div class="step reveal d4" style="padding-left: 0; border-left: none;">
+          <span class="step-n" aria-hidden="true">04</span>
+          <p class="step-title">Verify</p>
+          <code class="step-code">sage doctor</code>
+          <p class="step-note">checks the setup is valid</p>
+        </div>
+      </div>
+
+      <hr class="rule" style="margin-top: 5rem;">
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 5 — PILLARS
+  ══════════════════════════════════════════════════ -->
+  <section aria-labelledby="pillars-heading" style="padding: 5.5rem 0;">
+    <div class="wrap">
+
+      <span class="eyebrow reveal">04 — Principles</span>
+
+      <h2 id="pillars-heading"
+          class="headline reveal d1"
+          style="font-size: clamp(1.875rem, 4vw, 2.625rem); margin-top: 1.75rem;">
+        Six non-negotiables.
+      </h2>
+
+      <!-- Pillar grid: 3 cols on lg, 2 on sm, 1 on xs -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 2.5rem; margin-top: 3rem;"
+           class="max-lg:!grid-cols-2 max-sm:!grid-cols-1">
+
+        <article class="pillar reveal d1">
+          <span class="pillar-tick" aria-hidden="true"></span>
+          <p class="pillar-name">Passive by design</p>
+          <p class="pillar-desc">Watches and answers; never edits, spawns, or blocks.</p>
+        </article>
+
+        <article class="pillar reveal d2">
+          <span class="pillar-tick" aria-hidden="true"></span>
+          <p class="pillar-name">Read-only &amp; safe</p>
+          <p class="pillar-desc">It cannot change your repo. Ever.</p>
+        </article>
+
+        <article class="pillar reveal d3">
+          <span class="pillar-tick" aria-hidden="true"></span>
+          <p class="pillar-name">Zero-dependency</p>
+          <p class="pillar-desc">One Node CLI, no install bloat. Clone and run.</p>
+        </article>
+
+        <article class="pillar reveal d2">
+          <span class="pillar-tick" aria-hidden="true"></span>
+          <p class="pillar-name">Default-off</p>
+          <p class="pillar-desc">
+            Installing changes nothing until
+            <code class="inline">sage on</code>.
+          </p>
+        </article>
+
+        <article class="pillar reveal d3">
+          <span class="pillar-tick" aria-hidden="true"></span>
+          <p class="pillar-name">Fail-open</p>
+          <p class="pillar-desc">
+            Any error in the optional guard allows the action.
+            Never in your way.
+          </p>
+        </article>
+
+        <article class="pillar reveal d4">
+          <span class="pillar-tick" aria-hidden="true"></span>
+          <p class="pillar-name">Hot-path-cheap</p>
+          <p class="pillar-desc">
+            When idle the hook short-circuits instantly. Zero cost.
+          </p>
+        </article>
+      </div>
+
+      <hr class="rule" style="margin-top: 5rem;">
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 6 — A PEEK (terminal)
+  ══════════════════════════════════════════════════ -->
+  <section aria-labelledby="commands-heading" style="padding: 5.5rem 0;">
+    <div class="wrap">
+
+      <span class="eyebrow reveal">05 — Commands</span>
+
+      <h2 id="commands-heading"
+          class="headline reveal d1"
+          style="font-size: clamp(1.875rem, 4vw, 2.625rem); margin-top: 1.75rem; margin-bottom: 2.5rem;">
+        Ask the judge anything.
+      </h2>
+
+      <div class="reveal d2" style="max-width: 640px;">
+        <div class="terminal" role="region" aria-label="SAGE command examples">
+          <div>
+            <span class="t-dollar">$</span>
+            <span class="t-cmd"> sage board</span>
+            <span class="t-comment">          # the whole fleet at a glance</span>
+          </div>
+          <div>
+            <span class="t-dollar">$</span>
+            <span class="t-cmd"> sage territory</span>
+            <span class="t-comment">       # who's touching which files</span>
+          </div>
+          <div>
+            <span class="t-dollar">$</span>
+            <span class="t-cmd"> sage backlog</span>
+            <span class="t-comment">         # what each session claimed</span>
+          </div>
+          <div>
+            <span class="t-dollar">$</span>
+            <span class="t-cmd"> sage doctor</span>
+            <span class="t-comment">          # is my setup valid?</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="rule" style="margin-top: 5rem;">
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 7 — FINAL CTA
+  ══════════════════════════════════════════════════ -->
+  <section aria-labelledby="cta-heading" style="padding: 6rem 0 7rem;">
+    <div class="wrap">
+
+      <span class="eyebrow reveal">Get Started</span>
+
+      <h2 id="cta-heading"
+          class="headline reveal d1"
+          style="font-size: clamp(2.5rem, 7.5vw, 5.5rem); margin-top: 1.75rem;">
+        Bring a judge<br>to your fleet.
+      </h2>
+
+      <div class="reveal d2"
+           style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: 2.5rem;">
+        <a href="https://github.com/muslewski/agentic-sage"
+           target="_blank" rel="noopener noreferrer"
+           class="btn btn-primary">
+          View on GitHub ↗
+        </a>
+        <button class="cmd-block"
+                onclick="copyCmd(this, 'git clone https://github.com/muslewski/agentic-sage')"
+                aria-label="Copy git clone command">
+          <span class="cmd-dollar" aria-hidden="true">$</span>
+          <span class="cmd-text">git clone https://github.com/muslewski/agentic-sage</span>
+          <svg class="cmd-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="8.5" height="8.5" stroke="#1A1714" stroke-width="0.85"/>
+            <path d="M1 9.5V1H9.5" stroke="#1A1714" stroke-width="0.85"/>
+          </svg>
+          <span class="cmd-ok" aria-live="polite">Copied</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer style="border-top: 1px solid rgba(26,23,20,0.08); padding: 1.75rem 0;">
+    <div class="wrap" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center;">
+      <span style="font-size: 0.7rem; letter-spacing: 0.03em; color: rgba(26,23,20,0.38);">
+        SAGE · Session Awareness &amp; Guidance Engine · MIT · one judge per repo.
+      </span>
+      <a href="https://github.com/muslewski/agentic-sage"
+         target="_blank" rel="noopener noreferrer"
+         style="font-size: 0.7rem; letter-spacing: 0.03em; color: rgba(26,23,20,0.38); text-decoration: none; transition: color 0.18s ease;"
+         onmouseover="this.style.color='#B8862F'"
+         onmouseout="this.style.color='rgba(26,23,20,0.38)'">
+        github.com/muslewski/agentic-sage ↗
+      </a>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════════════ -->
+  <script>
+    (function () {
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ─ Progress bar ─ */
+      if (!reducedMotion) {
+        var prog = document.getElementById('prog');
+        window.addEventListener('scroll', function () {
+          var scrolled = window.scrollY;
+          var total = document.documentElement.scrollHeight - window.innerHeight;
+          prog.style.width = total > 0 ? (scrolled / total * 100) + '%' : '0%';
+        }, { passive: true });
+      }
+
+      /* ─ Hero entrance ─ */
+      if (!reducedMotion) {
+        var heroEls = document.querySelectorAll('.hero-in');
+        // rAF so the browser paints initial state (opacity:0) before the transition fires
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            heroEls.forEach(function (el) { el.classList.add('go'); });
+          });
+        });
+      }
+
+      /* ─ Scroll-reveal ─ */
+      if (!reducedMotion && 'IntersectionObserver' in window) {
+        var revealObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              revealObs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -48px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(function (el) {
+          revealObs.observe(el);
+        });
+      } else {
+        /* No observer support or reduced motion: show everything */
+        document.querySelectorAll('.reveal').forEach(function (el) {
+          el.classList.add('in');
+        });
+      }
+
+      /* ─ Count-up animation (the "8 agents" stat) ─ */
+      var countEls = document.querySelectorAll('.stat[data-target]');
+      if (!reducedMotion && 'IntersectionObserver' in window && countEls.length) {
+        var countObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el = entry.target;
+            var target = parseInt(el.getAttribute('data-target'), 10);
+            var duration = 900;
+            var start = null;
+
+            function tick(ts) {
+              if (!start) start = ts;
+              var progress = Math.min((ts - start) / duration, 1);
+              /* ease-out cubic */
+              var eased = 1 - Math.pow(1 - progress, 3);
+              el.textContent = Math.round(eased * target);
+              if (progress < 1) {
+                requestAnimationFrame(tick);
+              } else {
+                el.textContent = target;
+              }
+            }
+
+            requestAnimationFrame(tick);
+            countObs.unobserve(el);
+          });
+        }, { threshold: 0.5 });
+
+        countEls.forEach(function (el) { countObs.observe(el); });
+      } else {
+        countEls.forEach(function (el) {
+          el.textContent = el.getAttribute('data-target');
+        });
+      }
+
+    })();
+
+    /* ─ Copy command ─ */
+    function copyCmd(btn, text) {
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(text).then(function () {
+        var icon = btn.querySelector('.cmd-icon');
+        var ok = btn.querySelector('.cmd-ok');
+        if (icon) icon.style.display = 'none';
+        if (ok) ok.style.display = 'block';
+        setTimeout(function () {
+          if (icon) icon.style.display = '';
+          if (ok) ok.style.display = 'none';
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

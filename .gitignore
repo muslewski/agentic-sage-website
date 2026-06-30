@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# env / secrets
+.env
+.env.*
+
+# internal planning docs (kept out of the public marketing repo)
+docs/
+
+.vercel
+.DS_Store

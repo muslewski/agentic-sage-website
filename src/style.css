@@ -1,0 +1,325 @@
+/* ════ Reset / base ════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #0E0D0C;
+  color: #EFE7D8;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* <picture> lays out as a block so the inner <img width:100%> fills its frame */
+picture { display: block; }
+
+/* ════ CRT scanlines (v6) ════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.028) 2px, rgba(0,0,0,0.028) 4px
+  );
+}
+
+/* ════ Paper grain — used on nav + image frames (feTurbulence ~6%) ════ */
+.paper-tex::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+.nav-paper::after  { opacity: 0.07; z-index: 0; mix-blend-mode: overlay; }
+.frame-paper::after{ opacity: 0.06; z-index: 3; mix-blend-mode: overlay; }
+
+/* ════ Caveat accents ════ */
+.ann     { font-family: 'Caveat', cursive; color: #C8972F; }
+.ann-g   { font-family: 'Caveat', cursive; color: #6B7A3A; }
+.cav-g   { font-family: 'Caveat', cursive; color: #C8972F; }
+.cav-ol  { font-family: 'Caveat', cursive; color: #6B7A3A; }
+.cav-dim { font-family: 'Caveat', cursive; color: #6A6058; }
+.sec-cav { font-family: 'Caveat', cursive; font-size: 22px; color: #C8972F; letter-spacing: 0.02em; margin-bottom: 16px; display: block; }
+
+/* ════ Gold glow ════ */
+.gold-glow {
+  color: #C8972F;
+  text-shadow: 0 0 24px rgba(200,151,47,0.38), 0 0 60px rgba(200,151,47,0.12);
+}
+
+/* ════ Wordmark (v6) ════ */
+.wordmark {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(3.6rem, 9vw, 7.5rem);
+  color: #C8972F;
+  text-shadow: 0 0 30px rgba(200,151,47,0.22), 0 0 60px rgba(200,151,47,0.08);
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+/* ════ Badge (v6) ════ */
+.badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6B7A3A;
+  border: 1px solid #3A4520;
+  padding: 3px 9px;
+  border-radius: 2px;
+}
+
+/* ════ Section label (mono, v6/v8) ════ */
+.sec-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: #3A3428;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+/* ════ Terminal chrome (v6 tokens) ════ */
+.terminal {
+  background-color: rgba(10,9,8,0.97);
+  border: 1px solid #262014;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.65), 0 0 0 1px rgba(200,151,47,0.06);
+}
+.terminal-bar {
+  background: #161310;
+  border-bottom: 1px solid #252018;
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 7px;
+  user-select: none;
+}
+.dot   { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.dot-r { background:#FF5F57; }
+.dot-y { background:#FFBD2E; }
+.dot-g { background:#28C840; }
+.term-title { font-family:'JetBrains Mono',monospace; font-size:11px; color:#4A4438; letter-spacing:0.06em; margin:0 auto; }
+.term-body  { padding:18px 22px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.75; overflow-x:auto; }
+
+/* ════ Syntax colors ════ */
+.c-prompt { color: #6B7A3A; }
+.c-cmd    { color: #EFE7D8; }
+.c-cmt    { color: #3E3830; }
+.c-gold   { color: #C8972F; }
+.c-olive  { color: #6B7A3A; }
+.c-dim    { color: #4A4438; }
+.c-err    { color: #C0503A; }
+.c-cyan   { color: #4A8090; }
+
+/* ════ Blinking cursor ════ */
+.cursor {
+  display: inline-block; width: 8px; height: 1.05em;
+  background: #C8972F; vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+  box-shadow: 0 0 6px rgba(200,151,47,0.5);
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ════ Buttons ════ */
+.btn-gold {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 12px; letter-spacing: 0.06em;
+  text-decoration: none; border: none; cursor: pointer;
+  border-radius: 4px; transition: background 0.2s, box-shadow 0.2s;
+  background: #C8972F; color: #0E0D0C; padding: 13px 28px;
+}
+.btn-gold:hover { background: #B8862F; box-shadow: 0 0 22px rgba(200,151,47,0.28); }
+
+/* ════ Copy block ════ */
+.copy-block {
+  background: #0E0C0A; border: 1px solid #222018; border-radius: 4px;
+  padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: border-color 0.2s; font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap; overflow-x: auto;
+}
+.copy-block:hover { border-color: rgba(200,151,47,0.25); }
+.copy-block.copied { border-color: #6B7A3A; }
+.copy-icon { color: #3A3428; font-size: 13px; flex-shrink: 0; transition: color 0.2s; }
+.copy-block.copied .copy-icon { color: #6B7A3A; }
+
+/* Clickable command rows in the "how it works" terminal */
+.cmd-row {
+  cursor: pointer; border-radius: 4px;
+  padding: 2px 6px; margin: -2px -6px;
+  transition: background 0.15s ease;
+}
+.cmd-row:hover, .cmd-row:focus-visible { background: rgba(200,151,47,0.09); outline: none; }
+
+/* "Copied!" toast — floats above the clicked element (position:fixed, body-level) */
+#copy-toast {
+  position: fixed; z-index: 9999;
+  transform: translate(-50%, -100%) translateY(4px);
+  background: #6B7A3A; color: #0E0D0C;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  padding: 5px 11px; border-radius: 4px; white-space: nowrap;
+  pointer-events: none; opacity: 0; box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+#copy-toast.show { opacity: 1; transform: translate(-50%, -100%) translateY(-4px); }
+
+/* ════ Divider ════ */
+.divider { border: none; border-top: 1px solid #1C1A16; }
+
+/* ════ Editorial plate (v7, dark) ════ */
+.plate-ink {
+  border: 2px solid #C8972F;
+  box-shadow: 8px 10px 0 rgba(200,151,47,0.18), 0 28px 70px rgba(0,0,0,0.7);
+  display: inline-block;
+  background: #1A1714;
+  padding: 6px;
+  max-width: 100%;
+}
+.plate-ink img { display:block; width:100%; height:auto; }
+.plate-cap { font-family:'Caveat',cursive; font-size:15px; text-align:center; margin-top:6px; color:#8A8078; }
+
+/* ════ Creator's note — a handwritten plate pinned askew (the page's one human moment) ════ */
+/* Tilt lives on .note-plate; the scroll-reveal sits on a WRAPPER so .reveal.visible's
+   transform:none can't flatten the rotation. */
+.note-plate {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  background: #1A1714;
+  border: 2px solid #C8972F;
+  border-radius: 4px;
+  box-shadow: 10px 12px 0 rgba(200,151,47,0.16), 0 30px 70px rgba(0,0,0,0.7);
+  padding: clamp(26px,4vw,44px) clamp(24px,4.4vw,46px);
+  transform: rotate(-1.2deg);
+}
+.note-lead {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(30px,4.6vw,46px); line-height: 1.04;
+  color: #C8972F; margin-bottom: 18px;
+  text-shadow: 0 0 28px rgba(200,151,47,0.20);
+}
+.note-body { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.8; color: #C9BFB1; margin-bottom: 14px; }
+.note-rows { margin-top: 24px; display: flex; flex-direction: column; gap: 4px; }
+.note-row {
+  display: flex; align-items: center; gap: 11px; width: fit-content;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #EFE7D8;
+  text-decoration: none; cursor: pointer;
+  padding: 8px 10px; margin: 0 -10px; border-radius: 5px;
+  transition: background 0.15s ease;
+}
+.note-row:hover, .note-row:focus-visible { background: rgba(200,151,47,0.09); outline: none; }
+.note-row .gl { color: #6B7A3A; font-size: 15px; flex-shrink: 0; }
+.note-row.copied .copy-icon { color: #6B7A3A; }
+.note-sign {
+  display: block; text-align: right; margin-top: 24px;
+  font-family: 'Caveat', cursive; font-size: 26px; color: #C8972F;
+  text-decoration: none; opacity: 0.82; transition: opacity 0.15s ease;
+}
+.note-sign:hover, .note-sign:focus-visible { opacity: 1; }
+
+/* ════ Pillar card (v9 layout, recolored v6 dark) ════ */
+.pillar-card {
+  background: #14110D;
+  border: 1px solid #252018;
+  padding: 20px 18px;
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 rgba(200,151,47,0.10);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.pillar-card:hover {
+  transform: translate(-1px,-1px);
+  border-color: rgba(200,151,47,0.28);
+  box-shadow: 5px 5px 0 rgba(200,151,47,0.16);
+}
+
+/* ════ Step card (v6 'how it works' uses terminal — no extra needed) ════ */
+
+/* ════ Cinema full-bleed band (v8) ════ */
+.cinema-band {
+  width: 100vw;
+  position: relative;
+  left: 50%; right: 50%;
+  margin-left: -50vw; margin-right: -50vw;
+  overflow: hidden;
+}
+.cinema-band img { width:100%; display:block; object-fit:cover; }
+
+/* ════ Hero entrance (v6/v8 fade-up) ════ */
+.hi { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+.hi-1 { animation-delay: 0.05s; }
+.hi-2 { animation-delay: 0.22s; }
+.hi-3 { animation-delay: 0.38s; }
+.hi-4 { animation-delay: 0.54s; }
+.hi-5 { animation-delay: 0.70s; }
+.hi-6 { animation-delay: 0.86s; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+
+/* ════ Scroll reveal (supports both .reveal/.visible and .rv/.in) ════ */
+.reveal, .rv {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible, .rv.in { opacity: 1; transform: none; }
+.d1 { transition-delay: 0.10s; }
+.d2 { transition-delay: 0.20s; }
+.d3 { transition-delay: 0.30s; }
+.d4 { transition-delay: 0.40s; }
+.reveal-d1 { transition-delay: 0.08s; }
+.reveal-d2 { transition-delay: 0.16s; }
+.reveal-d3 { transition-delay: 0.24s; }
+
+/* ════ Wavy underline ════ */
+.wavy-wrap { position: relative; display: inline-block; }
+.wavy-wrap svg { position: absolute; bottom: -7px; left: 0; width: 100%; overflow: visible; pointer-events: none; }
+
+/* ════ Grids ════ */
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+.g2-start  { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; }
+.g2-wide   { display: grid; grid-template-columns: 5fr 8fr; gap: 40px; align-items: start; }
+.pillars-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+.peek-g    { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+@media (max-width: 960px) {
+  .hero-grid, .g2-start, .g2-wide, .peek-g, .principles-inner { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 560px) {
+  .pillars-grid { grid-template-columns: 1fr; }
+  /* terminals: smaller type, tighter padding, scroll the one long line instead of breaking layout */
+  .term-body { font-size: 11px !important; padding: 14px 16px; }
+  /* copy command: wrap on phones instead of a horizontal scrollbar inside the button */
+  .copy-block { white-space: normal; overflow-x: visible; overflow-wrap: anywhere; }
+  /* the judge: drop the tilt + heavy offset shadow so the full-width plate can't overflow the edge */
+  .plate-ink { transform: none !important; box-shadow: 6px 8px 0 rgba(200,151,47,0.18), 0 16px 36px rgba(0,0,0,0.6) !important; }
+  /* free up the nav so SAGE + CTA never collide on a narrow phone */
+  .nav-tag { display: none; }
+  /* the creator's note: drop the tilt + heavy offset so the plate can't overflow the edge */
+  .note-plate { transform: none; box-shadow: 7px 8px 0 rgba(200,151,47,0.16), 0 16px 36px rgba(0,0,0,0.6); }
+}
+
+/* ════ Principles inner (doctor terminal + pillars) ════ */
+/* NOTE: defined after the grid media query above, so it re-asserts its own collapse here
+   (a later same-specificity rule would otherwise win and keep it 2-col on mobile). */
+.principles-inner { display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: start; }
+@media (max-width: 960px) { .principles-inner { grid-template-columns: 1fr; gap: 40px; } }
+
+/* ════ Peek highlighted row (v6) ════ */
+.peek-hl {
+  background: rgba(200,151,47,0.07);
+  padding: 2px 6px;
+  border-left: 2px solid rgba(200,151,47,0.6);
+  margin-left: -6px;
+}
+
+/* ════ Scrollbar ════ */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:#0E0D0C; }
+::-webkit-scrollbar-thumb { background:#252018; border-radius:3px; }
+
+/* ════ Reduced motion ════ */
+@media (prefers-reduced-motion: reduce) {
+  .hi { opacity:1 !important; animation:none !important; }
+  .reveal, .rv { opacity:1 !important; transform:none !important; transition:none !important; }
+  .cursor { animation:none !important; opacity:1; }
+  #hero-anim-wrapper { display:none !important; }
+  #hero-static { display:block !important; }
+}

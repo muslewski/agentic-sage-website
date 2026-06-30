@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SAGE — landing explorations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Caveat:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --cream:#F4EFE6; --paper:#FBF8F2; --ink:#1A1714; --gold:#B8862F; --gold2:#C8972F; --olive:#6B7A3A; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--cream); color:var(--ink); font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+    .wrap { max-width:1140px; margin:0 auto; padding:60px 24px 100px; }
+    header { display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; border-bottom:1px solid rgba(26,23,20,.14); padding-bottom:22px; margin-bottom:28px; }
+    .mark { font-family:'Archivo',sans-serif; font-weight:900; font-size:38px; letter-spacing:-.02em; }
+    .exp { font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:600; }
+    .lede { font-size:17px; max-width:64ch; line-height:1.6; color:#46413a; margin:0 0 14px; }
+    .lede b { color:var(--ink); }
+    .sech { display:flex; align-items:baseline; gap:14px; margin:46px 0 6px; }
+    .sech h2 { font-family:'Archivo',sans-serif; font-weight:700; font-size:22px; margin:0; letter-spacing:-.01em; }
+    .sech .cv { font-family:'Caveat',cursive; font-size:22px; color:var(--gold); }
+    .subnote { font-size:13.5px; color:#6a635a; margin:0 0 22px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
+    .card { display:block; text-decoration:none; color:inherit; background:var(--paper); border:1px solid rgba(26,23,20,.12); border-radius:14px; padding:24px 22px; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; position:relative; overflow:hidden; }
+    .card:hover { transform:translateY(-4px); box-shadow:0 14px 30px rgba(26,23,20,.13); border-color:var(--gold); }
+    .num { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--gold); font-weight:500; }
+    .tag { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:500; padding:2px 8px; border-radius:20px; margin-left:8px; vertical-align:middle; }
+    .tag.dark { background:#1A1714; color:#EFE7D8; }
+    .tag.light { background:#EFE7D8; color:#1A1714; border:1px solid rgba(26,23,20,.18); }
+    .ttl { font-family:'Archivo',sans-serif; font-weight:700; font-size:21px; margin:9px 0 7px; letter-spacing:-.01em; }
+    .desc { font-size:14px; line-height:1.55; color:#5a544c; margin:0; }
+    .go { margin-top:16px; font-size:13px; font-weight:600; color:var(--gold); display:inline-flex; align-items:center; gap:6px; }
+    .swatch { position:absolute; right:0; top:0; bottom:0; width:7px; }
+    footer { margin-top:60px; font-size:13px; color:#8a8278; font-family:'JetBrains Mono',monospace; border-top:1px solid rgba(26,23,20,.12); padding-top:20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="mark">SAGE</span>
+      <span class="exp">landing explorations</span>
+    </header>
+
+    <div class="sech"><h2>Round 3 — your cherry-pick</h2><span class="cv">the assembly →</span></div>
+    <p class="subnote">v6 palette + hero(v6 left · v7 terminal) · problem(v8) · what-is(v7) · how(v6) · pillars(v9·dark) · peek/judge/CTA(v7) · nav(v8) · footer(v9) + paper texture. <b>(building — refresh as they land.)</b></p>
+    <div class="grid">
+      <a class="card" href="v11-assembly-a.html"><span class="swatch" style="background:#1A1714"></span><span class="num">v11</span><span class="tag dark">A · faithful</span><h2 class="ttl">Assembly — faithful</h2><p class="desc">The literal cherry-pick: each chosen section reproduced close to source, recolored to v6 + paper texture.</p><span class="go">Open →</span></a>
+      <a class="card" href="v12-assembly-b.html"><span class="swatch" style="background:#1A1714"></span><span class="num">v12</span><span class="tag dark">B · refined</span><h2 class="ttl">Assembly — refined</h2><p class="desc">Same assembly, harmonized into one polished system: smoothed seams, native-dark pillars, stronger grain.</p><span class="go">Open →</span></a>
+    </div>
+
+    <div class="sech"><h2>Round 2 — refined</h2><span class="cv">the winners, fused →</span></div>
+    <p class="subnote">v2 terminal hero + editorial cursive &amp; wavy lines + the problem/solution arc + fixed full-size imagery. 3 dark · 2 light. <b>(building — refresh as they land.)</b></p>
+    <div class="grid">
+      <a class="card" href="v6-dark-pure.html"><span class="swatch" style="background:#1A1714"></span><span class="num">v6</span><span class="tag dark">dark</span><h2 class="ttl">Terminal Pure</h2><p class="desc">Closest to v2 — every weak section fixed: mascot speech bubble, <code>sage doctor</code> ✓ pillars, double terminal peek.</p><span class="go">Open →</span></a>
+      <a class="card" href="v7-dark-zine.html"><span class="swatch" style="background:#1A1714"></span><span class="num">v7</span><span class="tag dark">dark</span><h2 class="ttl">Zine-Terminal</h2><p class="desc">v1's editorial soul on v2's engine — heavy Caveat + wavy lines, mascot as central character, framed plates.</p><span class="go">Open →</span></a>
+      <a class="card" href="v8-dark-magazine.html"><span class="swatch" style="background:#1A1714"></span><span class="num">v8</span><span class="tag dark">dark</span><h2 class="ttl">Cinematic Magazine</h2><p class="desc">Full-bleed banner bands with headline overlays, asymmetric big type, mascot pull-quote bubble.</p><span class="go">Open →</span></a>
+      <a class="card" href="v9-light-paper.html"><span class="swatch" style="background:linear-gradient(180deg,#FBF8F2,#1A1714)"></span><span class="num">v9</span><span class="tag light">light</span><h2 class="ttl">Warm Paper Terminal</h2><p class="desc">Cream editorial page, the dark terminal embedded as the jewel; fonts &amp; wavy lines shine on paper.</p><span class="go">Open →</span></a>
+      <a class="card" href="v10-light-editorial.html"><span class="swatch" style="background:linear-gradient(180deg,#FBF8F2,#C8972F)"></span><span class="num">v10</span><span class="tag light">light</span><h2 class="ttl">Editorial Minimal</h2><p class="desc">Light, calm, whitespace; dark terminal block, Caveat &amp; wavy used sparingly, generous full-width imagery.</p><span class="go">Open →</span></a>
+    </div>
+
+    <div class="sech"><h2>Round 1 — directions</h2><span class="cv">where it started</span></div>
+    <p class="subnote">The original 5 wild directions. v2-terminal &amp; v1-editorial were the picks.</p>
+    <div class="grid">
+      <a class="card" href="v1-editorial.html"><span class="swatch" style="background:#B8862F"></span><span class="num">01</span><h2 class="ttl">Editorial hand-drawn</h2><p class="desc">Cream paper, mascot hero, hand-drawn arrows &amp; underlines, storybook warmth.</p><span class="go">Open →</span></a>
+      <a class="card" href="v2-terminal.html"><span class="swatch" style="background:#0E0D0C"></span><span class="num">02</span><h2 class="ttl">Terminal / developer</h2><p class="desc">Dark, monospace, a big typed <code>sage board</code> terminal. The winner.</p><span class="go">Open →</span></a>
+      <a class="card" href="v3-minimal.html"><span class="swatch" style="background:#FBF8F2;border-left:1px solid rgba(0,0,0,.1)"></span><span class="num">03</span><h2 class="ttl">Minimal Swiss</h2><p class="desc">Whitespace, huge restrained type, one gold hairline. Calm "advisor" restraint.</p><span class="go">Open →</span></a>
+      <a class="card" href="v4-brutalist.html"><span class="swatch" style="background:#1A1714"></span><span class="num">04</span><h2 class="ttl">Bold brutalist</h2><p class="desc">Heavy black borders, hard offset shadows, marquee, hover-invert.</p><span class="go">Open →</span></a>
+      <a class="card" href="v5-glass.html"><span class="swatch" style="background:linear-gradient(180deg,#C8972F,#E7C98a)"></span><span class="num">05</span><h2 class="ttl">Modern SaaS glass</h2><p class="desc">Warm gradients, frosted glass cards, floating gold orbs.</p><span class="go">Open →</span></a>
+    </div>
+
+    <footer>SAGE · Session Awareness &amp; Guidance Engine · pick a round-2 direction →</footer>
+  </div>
+</body>
+</html>
