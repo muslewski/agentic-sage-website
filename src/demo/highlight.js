@@ -24,15 +24,18 @@ function tokenClass(tok) {
   if (/^(dead|closed)$/.test(tok)) return 'c-err'
   if (/^(clean|none|free)$/.test(tok)) return 'c-dim'
   if (/^[●✓✨]$/u.test(tok)) return 'c-olive'
-  if (/[⚠🟡]/u.test(tok)) return 'c-gold'
+  if (/[⚠🟡✎]/u.test(tok)) return 'c-gold' // warn / uncommitted
   if (/^✗$/u.test(tok)) return 'c-err'
   if (/^⬜$/u.test(tok)) return 'c-dim'
+  if (/^fresh$/.test(tok)) return 'c-olive' // handoff buckets
+  if (/^(aging|stale)$/.test(tok)) return 'c-gold'
   if (/^sage:?$/.test(tok)) return 'c-olive' // the judge speaking / the binary
   if (/^sesh-/.test(tok)) return 'c-cmd'
   if (/^\d+%$/.test(tok)) return 'c-cyan'
   if (/^\d+[fmhd]$/.test(tok)) return 'c-dim'
   if (/^ago$/.test(tok)) return 'c-dim'
-  if (/[/*]/.test(tok)) return 'c-dim' // paths and globs
+  // dirs (end "/"), globs (have "*"), or file paths ("/…​.ext") — NOT branches
+  if (/\*/.test(tok) || /\/$/.test(tok) || /\/[^/]*\.\w+$/.test(tok)) return 'c-dim'
   if (/^[↳•·—@]/u.test(tok)) return 'c-dim'
   return null
 }

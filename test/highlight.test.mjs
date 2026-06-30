@@ -32,6 +32,17 @@ test('glyphs colorize: check ok, warn, bad', () => {
 
 test('paths and globs are dimmed', () => {
   assert.equal(clsOf('claimed src/auth/** here', 'src/auth/**'), 'c-dim')
+  assert.equal(clsOf('zone pipelines/ here', 'pipelines/'), 'c-dim') // trailing-slash dir
+})
+
+test('a branch (has a slash but is not a path) is NOT dimmed', () => {
+  // body line → branch inherits base (''), it must not be mistaken for a path
+  assert.equal(clsOf('● feat/distributed-training active', 'feat/distributed-training'), '')
+})
+
+test('balanced-board markers colorize: ✎ gold, fresh olive', () => {
+  assert.equal(clsOf('● feat/x ✎  active  src/  fresh 21m', '✎'), 'c-gold')
+  assert.equal(clsOf('● feat/x ✎  active  src/  fresh 21m', 'fresh'), 'c-olive')
 })
 
 test('sage: quip prefix is olive', () => {

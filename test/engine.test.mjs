@@ -5,7 +5,7 @@ import { createEngine } from '../src/demo/engine.js'
 test('run sage board returns board output lines', () => {
   const e = createEngine(0)
   const r = e.run('sage board')
-  assert.ok(r.lines.join('\n').startsWith('SAGE board · acme-web'))
+  assert.ok(r.lines.join('\n').startsWith('SAGE · acme-web'))
 })
 
 test('bare sage prints USAGE', () => {

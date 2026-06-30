@@ -11,28 +11,41 @@ const others = (sc) => sc.sessions.filter((s) => s.session_id !== sc.self)
 const globRe = (g) => new RegExp('^' + g.replace(/[.]/g, '\\.').replace(/\*\*/g, ' ').replace(/\*/g, '[^/]*').replace(/ /g, '.*') + '$')
 const matches = (glob, p) => globRe(glob).test(p) || globRe(p).test(glob)
 
-// ── board ──  (mirror lib/board.mjs renderBoard)
+// ── board ──  (mirror lib/board.mjs renderBoard — human-first "balanced" layout)
+// branch is the identity (not the UUID); zone = where they work; status carries
+// ctx; ✎ = uncommitted; ↳ = backlog row; ⚠ = a dead session still holds a row.
+const dirOf = (g) => {
+  const i = g.lastIndexOf('/')
+  return i < 0 ? '' : g.slice(0, i + 1)
+}
+const zoneOf = (globs) => {
+  const dirs = [...new Set((globs || []).map(dirOf).filter(Boolean))]
+  if (!dirs.length) return ''
+  return dirs.length === 1 ? dirs[0] : `${dirs[0]} +${dirs.length - 1}`
+}
+const stripAgo = (s) => String(s || '').replace(/\s*ago$/, '')
+const padR = (s, n) => String(s ?? '').padEnd(n) // no truncation (n = max width)
+
 function renderBoard(_args, sc) {
-  const head = `SAGE board · ${sc.repoId} · ${sc.sessions.length} session(s)`
-  if (!sc.sessions.length) return `${head}\n  (no sessions)`
+  const n = sc.sessions.length
+  const head = `SAGE · ${sc.repoId} · ${n} session${n === 1 ? '' : 's'}`
+  if (!n) return `${head}\n  (no sessions)`
   const rows = sc.sessions.map((s) => {
-    const ctx = s.ctxPct != null ? `${s.ctxPct}%` : ''
-    const touched = `${(s.touched_globs || []).length}f`
-    return (
-      [
-        pad(s.session_id, 8),
-        pad(s.liveness, 8),
-        pad(s.branch || '(none)', 18),
-        pad(s.dirty ? 'dirty' : 'clean', 6),
-        pad(touched, 5),
-        pad(s.handoff || 'none', 14),
-        pad(ctx, 5),
-      ].join('  ') +
-      (s.tmux ? `  @${s.tmux}` : '') +
-      (s.claimed_row ? `  ↳ ${s.claimed_row}` : '')
-    )
+    const dead = s.liveness === 'dead' || s.liveness === 'closed'
+    return {
+      id: `${s.branch || s.session_id}${s.dirty ? ' ✎' : ''}`,
+      status: s.liveness + (s.ctxPct != null ? ` · ${s.ctxPct}%` : ''),
+      zone: zoneOf(s.touched_globs),
+      when: stripAgo(s.handoff),
+      tail: `${s.claimed_row ? `↳${s.claimed_row}` : ''}${dead && s.claimed_row ? ' ⚠' : ''}`,
+    }
   })
-  return [head, ...rows].join('\n')
+  const w = (k) => Math.max(...rows.map((r) => r[k].length))
+  const wId = w('id'), wSt = w('status'), wZo = w('zone'), wWh = w('when')
+  const lines = rows.map((r) =>
+    `● ${padR(r.id, wId)}  ${padR(r.status, wSt)}  ${padR(r.zone, wZo)}  ${padR(r.when, wWh)}${r.tail ? `  ${r.tail}` : ''}`.replace(/\s+$/, ''),
+  )
+  return [head, '', ...lines].join('\n')
 }
 
 // ── fleet ──  (mirror lib/fleet.mjs fleetLine)
