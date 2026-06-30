@@ -55,6 +55,13 @@ test('unknown command gets a sage-flavored quip, not bare command-not-found', ()
   assert.doesNotMatch(out, /command not found/i)
 })
 
+test('territory strips shell quotes around a glob (the demo button quotes it)', () => {
+  const e = createEngine(0)
+  const out = e.run("sage territory 'src/**'").lines.join('\n')
+  assert.doesNotMatch(out, /clear — no other session/)
+  assert.match(out, /touched|claimed/)
+})
+
 test('complete gives ghost suffix for a prefix', () => {
   const e = createEngine(0)
   assert.equal(e.complete('sage boa'), 'rd')

@@ -73,7 +73,9 @@ export function createEngine(scenarioIndex = 0) {
       histPos = inputs.length
     }
     if (!raw) return { lines: [] }
-    const parts = raw.split(/\s+/)
+    // split on whitespace and strip shell-style surrounding quotes per token,
+    // mirroring real argv (the demo quotes globs, e.g. territory 'src/**')
+    const parts = raw.split(/\s+/).map((t) => t.replace(/^(['"])(.*)\1$/, '$2'))
     const head = parts[0]
 
     if (head !== 'sage') return runShell(head, parts.slice(1))
