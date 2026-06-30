@@ -247,32 +247,74 @@
   <!-- 5fr / 8fr — image column intentionally wider per round-2 brief -->
   <div class="g2-wide">
 
-    <!-- Steps terminal (left, narrower) -->
+    <!-- Tabbed install switch (left, narrower) — npm default -->
     <div class="terminal">
       <div class="terminal-bar">
         <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
         <span class="term-title">setup</span>
       </div>
+      <div class="install-tabs" role="tablist" aria-label="Install method">
+        <button class="install-tab" id="tab-npm" role="tab" aria-selected="true" aria-controls="panel-npm" type="button">npm</button>
+        <button class="install-tab" id="tab-marketplace" role="tab" aria-selected="false" aria-controls="panel-marketplace" tabindex="-1" type="button">marketplace</button>
+        <button class="install-tab" id="tab-git" role="tab" aria-selected="false" aria-controls="panel-git" tabindex="-1" type="button">git</button>
+      </div>
       <div class="term-body" style="min-height:auto;font-size:12px;">
-        <div style="margin-bottom:14px;">
-          <div class="cmd-row" onclick="copyCmd(this)" data-cmd="git clone https://github.com/muslewski/agentic-sage" role="button" tabindex="0" aria-label="Copy command: git clone"><span class="c-prompt">$</span> <span class="c-cmd">git clone https://github.com/muslewski/agentic-sage</span></div>
-          <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#1</span> <span style="color:#4A4438;">Clone the repo</span></div>
+
+        <div class="install-panel" id="panel-npm" role="tabpanel" aria-labelledby="tab-npm">
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="npm install -g agentic-sage" role="button" tabindex="0" aria-label="Copy command: npm install -g agentic-sage"><span class="c-prompt">$</span> <span class="c-cmd">npm install -g agentic-sage</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#1</span> <span style="color:#4A4438;">Install globally</span></div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="sage init" role="button" tabindex="0" aria-label="Copy command: sage init"><span class="c-prompt">$</span> <span class="c-cmd">sage init</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#2</span> <span style="color:#4A4438;">Wire into ~/.claude — installs DISABLED</span></div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="sage on" role="button" tabindex="0" aria-label="Copy command: sage on"><span class="c-prompt">$</span> <span class="c-cmd">sage on</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#3</span> <span style="color:#4A4438;">Enable — nothing runs until you do this</span></div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="sage doctor" role="button" tabindex="0" aria-label="Copy command: sage doctor"><span class="c-prompt">$</span> <span class="c-cmd">sage doctor</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#4</span> <span style="color:#4A4438;">Verify your setup is valid</span></div>
+          </div>
+          <div style="border-top:1px solid #1E1C16;padding-top:14px;margin-top:4px;">
+            <span class="c-olive">✓</span> <span style="color:#5A5248;">sage is watching</span>
+          </div>
         </div>
-        <div style="margin-bottom:14px;">
-          <div class="cmd-row" onclick="copyCmd(this)" data-cmd="node install.mjs" role="button" tabindex="0" aria-label="Copy command: node install.mjs"><span class="c-prompt">$</span> <span class="c-cmd">node install.mjs</span></div>
-          <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#2</span> <span style="color:#4A4438;">Wire the hook — touches nothing else</span></div>
+
+        <div class="install-panel" id="panel-marketplace" role="tabpanel" aria-labelledby="tab-marketplace" hidden>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="/plugin marketplace add muslewski/agentic-sage" role="button" tabindex="0" aria-label="Copy command: plugin marketplace add"><span class="c-prompt">$</span> <span class="c-cmd">/plugin marketplace add muslewski/agentic-sage</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#1</span> <span style="color:#4A4438;">Add the marketplace in Claude Code</span></div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="/plugin install" role="button" tabindex="0" aria-label="Copy command: plugin install"><span class="c-prompt">$</span> <span class="c-cmd">/plugin install</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#2</span> <span style="color:#4A4438;">Install the bundled skills</span></div>
+          </div>
+          <div style="border-top:1px solid #1E1C16;padding-top:14px;margin-top:4px;font-size:11px;">
+            <span style="color:#5A5248;">For the <span class="c-cmd">sage</span> CLI verbs, also run <span class="c-cmd">npm install -g agentic-sage</span>.</span>
+          </div>
         </div>
-        <div style="margin-bottom:14px;">
-          <div class="cmd-row" onclick="copyCmd(this)" data-cmd="sage on" role="button" tabindex="0" aria-label="Copy command: sage on"><span class="c-prompt">$</span> <span class="c-cmd">sage on</span></div>
-          <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#3</span> <span style="color:#4A4438;">Enable — nothing runs until you do this</span></div>
+
+        <div class="install-panel" id="panel-git" role="tabpanel" aria-labelledby="tab-git" hidden>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="git clone https://github.com/muslewski/agentic-sage.git" role="button" tabindex="0" aria-label="Copy command: git clone"><span class="c-prompt">$</span> <span class="c-cmd">git clone https://github.com/muslewski/agentic-sage.git</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#1</span> <span style="color:#4A4438;">Clone the repo</span></div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="cd agentic-sage" role="button" tabindex="0" aria-label="Copy command: cd agentic-sage"><span class="c-prompt">$</span> <span class="c-cmd">cd agentic-sage</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#2</span> <span style="color:#4A4438;">Enter the directory</span></div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="node install.mjs" role="button" tabindex="0" aria-label="Copy command: node install.mjs"><span class="c-prompt">$</span> <span class="c-cmd">node install.mjs</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#3</span> <span style="color:#4A4438;">Wire from source — same as sage init</span></div>
+          </div>
+          <div style="margin-bottom:14px;">
+            <div class="cmd-row" onclick="copyCmd(this)" data-cmd="sage on" role="button" tabindex="0" aria-label="Copy command: sage on"><span class="c-prompt">$</span> <span class="c-cmd">sage on</span></div>
+            <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#4</span> <span style="color:#4A4438;">Enable</span></div>
+          </div>
         </div>
-        <div style="margin-bottom:14px;">
-          <div class="cmd-row" onclick="copyCmd(this)" data-cmd="sage doctor" role="button" tabindex="0" aria-label="Copy command: sage doctor"><span class="c-prompt">$</span> <span class="c-cmd">sage doctor</span></div>
-          <div style="font-size:11px;padding-left:14px;margin-top:2px;"><span class="c-cmt">#4</span> <span style="color:#4A4438;">Verify your setup is valid</span></div>
-        </div>
-        <div style="border-top:1px solid #1E1C16;padding-top:14px;margin-top:4px;">
-          <span class="c-olive">✓</span> <span style="color:#5A5248;">sage is watching</span>
-        </div>
+
       </div>
     </div>
 
