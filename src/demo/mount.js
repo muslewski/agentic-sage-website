@@ -1,4 +1,19 @@
 import { createEngine } from './engine.js'
+import { highlight } from './highlight.js'
+
+// build colored spans from a line, XSS-safe (textContent per span)
+function paintInto(el, line) {
+  for (const { text, cls } of highlight(line)) {
+    if (cls) {
+      const s = document.createElement('span')
+      s.className = cls
+      s.textContent = text
+      el.appendChild(s)
+    } else {
+      el.appendChild(document.createTextNode(text))
+    }
+  }
+}
 
 const REDUCED = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -14,14 +29,18 @@ export function mountDemo(root) {
     if (cmd != null) {
       const el = document.createElement('div')
       el.className = 'demo-out-line'
-      el.innerHTML = `<span class="c-prompt">$</span> <span class="demo-out-cmd"></span>`
-      el.querySelector('.demo-out-cmd').textContent = ` ${cmd}`
+      const prompt = document.createElement('span')
+      prompt.className = 'c-prompt'
+      prompt.textContent = '$'
+      el.appendChild(prompt)
+      el.appendChild(document.createTextNode(' '))
+      paintInto(el, cmd)
       out.appendChild(el)
     }
     for (const ln of lines) {
       const el = document.createElement('div')
       el.className = 'demo-out-line'
-      el.textContent = ln
+      paintInto(el, ln)
       out.appendChild(el)
     }
     out.scrollTop = out.scrollHeight
