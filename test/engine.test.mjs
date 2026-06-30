@@ -41,6 +41,20 @@ test('clear signals a wipe', () => {
   assert.equal(e.run('clear').clear, true)
 })
 
+test('cat returns a cats pun, not command-not-found', () => {
+  const e = createEngine(0)
+  const out = e.run('cat package.json').lines.join('\n')
+  assert.match(out, /cat/i)
+  assert.doesNotMatch(out, /command not found/i)
+})
+
+test('unknown command gets a sage-flavored quip, not bare command-not-found', () => {
+  const e = createEngine(0)
+  const out = e.run('vim').lines.join('\n')
+  assert.match(out, /sage/i)
+  assert.doesNotMatch(out, /command not found/i)
+})
+
 test('complete gives ghost suffix for a prefix', () => {
   const e = createEngine(0)
   assert.equal(e.complete('sage boa'), 'rd')

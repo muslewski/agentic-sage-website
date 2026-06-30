@@ -34,6 +34,8 @@ export function mountDemo(root) {
   }
 
   const refreshGhost = () => {
+    // empty input → no ghost, so the native placeholder shows alone (no overlap)
+    if (!input.value) { ghost.textContent = ''; return }
     const suffix = engine.complete(input.value)
     ghost.textContent = input.value + suffix
   }

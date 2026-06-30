@@ -59,8 +59,10 @@ export function createEngine(scenarioIndex = 0) {
         return { lines: [], clear: true }
       case 'help':
         return { lines: USAGE.split('\n') }
+      case 'cat':
+        return { lines: ["sage: this is a demo of SAGE, not cats. 🐈 no purrs here — try `sage board`."] }
       default:
-        return { lines: [`sage-demo: ${cmd}: command not found (try: sage board)`] }
+        return { lines: [`sage: "${cmd}" isn't in my repertoire. I judge fleets, not shells — try \`sage board\` or \`help\`.`] }
     }
   }
 
