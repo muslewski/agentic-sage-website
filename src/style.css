@@ -322,6 +322,7 @@ body::before {
   .cursor { animation:none !important; opacity:1; }
   #hero-anim-wrapper { display:none !important; }
   #hero-static { display:block !important; }
+  #demo-terminal.demo-pulse .demo-input { animation:none !important; }
 }
 
 /* ── interactive PEEK demo ── */

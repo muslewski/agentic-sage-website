@@ -57,8 +57,8 @@ export const SCENARIOS = [
     ],
     repos: [
       { repoId: 'acme-web', sessions: 3, last: '8m ago' },
-      { repoId: 'mkdocs-site', sessions: 1, last: '1h ago' },
-      { repoId: 'ml-pipeline', sessions: 2, last: '21m ago' },
+      { repoId: 'mkdocs-site', sessions: 2, last: '1h ago' },
+      { repoId: 'ml-pipeline', sessions: 3, last: '21m ago' },
     ],
   },
 
@@ -102,8 +102,8 @@ export const SCENARIOS = [
     ],
     repos: [
       { repoId: 'acme-web', sessions: 3, last: '8m ago' },
-      { repoId: 'mkdocs-site', sessions: 1, last: '1h ago' },
-      { repoId: 'ml-pipeline', sessions: 2, last: '21m ago' },
+      { repoId: 'mkdocs-site', sessions: 2, last: '1h ago' },
+      { repoId: 'ml-pipeline', sessions: 3, last: '21m ago' },
     ],
   },
 
@@ -160,8 +160,8 @@ export const SCENARIOS = [
     ],
     repos: [
       { repoId: 'acme-web', sessions: 3, last: '8m ago' },
-      { repoId: 'mkdocs-site', sessions: 1, last: '1h ago' },
-      { repoId: 'ml-pipeline', sessions: 2, last: '21m ago' },
+      { repoId: 'mkdocs-site', sessions: 2, last: '1h ago' },
+      { repoId: 'ml-pipeline', sessions: 3, last: '21m ago' },
     ],
   },
 ]
