@@ -28,3 +28,9 @@ test('git clone appears only inside the git panel', () => {
   const panelGitEnd = html.indexOf('</section>', panelGit)
   assert.ok(idx > panelGit && idx < panelGitEnd, 'git clone must live in panel-git')
 })
+
+test('hero + CTA copy-blocks are npm, never git clone', () => {
+  const blocks = html.match(/class="copy-block[^"]*"[^>]*data-cmd="([^"]+)"/g) || []
+  assert.ok(blocks.length >= 2, 'expected hero + CTA copy-blocks')
+  for (const b of blocks) assert.match(b, /data-cmd="npm install -g agentic-sage"/, `copy-block must be npm: ${b}`)
+})
