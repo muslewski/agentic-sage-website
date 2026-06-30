@@ -54,7 +54,10 @@
       <span style="font-family:Anton,sans-serif;font-size:26px;color:#C8972F;letter-spacing:0.12em;text-shadow:0 0 10px rgba(200,151,47,0.3);">SAGE</span>
       <span class="nav-tag" style="font-size:10px;color:#2E2A22;letter-spacing:0.10em;font-family:'JetBrains Mono',monospace;white-space:nowrap;">// fleet judge</span>
     </div>
-    <a href="https://github.com/muslewski/agentic-sage" class="btn-gold" target="_blank" rel="noopener" style="font-size:11px;padding:9px 20px;">View on GitHub →</a>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <a href="#peek" class="nav-demo" title="Jump to the live demo (same page, no redirect)" aria-label="Jump to the live demo on this page" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C8972F;text-decoration:none;letter-spacing:0.04em;white-space:nowrap;">Live demo ↓</a>
+      <a href="https://github.com/muslewski/agentic-sage" class="btn-gold" target="_blank" rel="noopener" style="font-size:11px;padding:9px 20px;">View on GitHub →</a>
+    </div>
   </div>
 </nav>
 
@@ -375,49 +378,41 @@
 
   <div class="reveal reveal-d2 peek-g">
 
-    <!-- Left: 4 commands -->
+    <!-- Left: clickable command menu — each row runs on the right -->
     <div class="terminal">
       <div class="terminal-bar">
         <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
         <span class="term-title">sage — commands</span>
       </div>
       <div class="term-body" style="font-size:12px;">
-        <div style="margin-bottom:14px;"><span class="c-prompt">$</span> <span class="c-cmd">sage board</span><span class="c-cmt">          # the whole fleet at a glance</span></div>
-        <div style="margin-bottom:14px;"><span class="c-prompt">$</span> <span class="c-cmd">sage territory</span><span class="c-cmt">     # who's touching which files</span></div>
-        <div style="margin-bottom:14px;"><span class="c-prompt">$</span> <span class="c-cmd">sage backlog</span><span class="c-cmt">        # what each session claimed</span></div>
-        <div><span class="c-prompt">$</span> <span class="c-cmd">sage doctor</span><span class="c-cmt">         # is my setup valid?</span></div>
+        <button class="demo-run" data-run="sage board" type="button"><span class="c-prompt">$</span> <span class="c-cmd">sage board</span><span class="c-cmt">          # the whole fleet at a glance</span><span class="demo-run-tag">▶ run</span></button>
+        <button class="demo-run" data-run="sage territory 'src/**'" type="button"><span class="c-prompt">$</span> <span class="c-cmd">sage territory</span><span class="c-cmt">     # who's touching which files</span><span class="demo-run-tag">▶ run</span></button>
+        <button class="demo-run" data-run="sage backlog" type="button"><span class="c-prompt">$</span> <span class="c-cmd">sage backlog</span><span class="c-cmt">        # what each session claimed</span><span class="demo-run-tag">▶ run</span></button>
+        <button class="demo-run" data-run="sage doctor" type="button"><span class="c-prompt">$</span> <span class="c-cmd">sage doctor</span><span class="c-cmt">         # is my setup valid?</span><span class="demo-run-tag">▶ run</span></button>
         <div style="border-top:1px solid #2A2418;margin-top:16px;padding-top:12px;">
-          <span class="cav-g" style="font-size:19px;" aria-hidden="true">that's the whole CLI →</span>
+          <span class="cav-g" style="font-size:19px;" aria-hidden="true">click any line — runs it live →</span>
         </div>
       </div>
     </div>
 
-    <!-- Right: sage board output + Caveat callout -->
+    <!-- Right: the interactive terminal -->
     <div style="position:relative;">
-      <div class="terminal">
+      <div class="terminal" id="demo-terminal">
         <div class="terminal-bar">
           <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-          <span class="term-title">$ sage board — live output</span>
+          <span class="term-title">$ sage — live demo</span>
+          <button class="demo-randomize" id="demo-randomize" type="button" title="Load a different fleet">⟲ randomize</button>
         </div>
-        <div class="term-body" style="font-size:12px;">
-          <div style="color:#3A3428;margin-bottom:8px;">── fleet board ─────────────────────</div>
-          <div class="peek-hl"><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-1</span><span class="c-dim" style="display:inline-block;width:96px;">src/auth/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">8m</span></div>
-          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-2</span><span class="c-dim" style="display:inline-block;width:96px;">src/billing/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">12m</span></div>
-          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-3</span><span class="c-dim" style="display:inline-block;width:96px;">src/editor/</span><span class="c-olive" style="display:inline-block;width:52px;">idle</span><span class="c-dim">3m</span></div>
-          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-4</span><span class="c-dim" style="display:inline-block;width:96px;">src/api/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">1m</span></div>
-          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-5</span><span class="c-dim" style="display:inline-block;width:96px;">src/tests/</span><span class="c-cyan" style="display:inline-block;width:52px;">done</span><span class="c-dim">22m</span></div>
-          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-6</span><span class="c-dim" style="display:inline-block;width:96px;">src/store/</span><span class="c-gold" style="display:inline-block;width:52px;">active</span><span class="c-dim">4m</span></div>
-          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-7</span><span class="c-dim" style="display:inline-block;width:96px;">src/hooks/</span><span class="c-olive" style="display:inline-block;width:52px;">idle</span><span class="c-dim">18m</span></div>
-          <div><span class="c-olive">●</span> <span class="c-cmd" style="display:inline-block;width:68px;">agent-8</span><span class="c-dim" style="display:inline-block;width:96px;">src/types/</span><span class="c-cyan" style="display:inline-block;width:52px;">done</span><span class="c-dim">35m</span></div>
-          <div style="color:#3A3428;margin-top:8px;margin-bottom:4px;">── territory ───────────────────────</div>
-          <div><span class="c-dim" style="display:inline-block;width:170px;">src/auth/session.ts</span><span class="c-dim">→ </span><span class="c-gold">agent-1</span></div>
-          <div><span class="c-dim" style="display:inline-block;width:170px;">src/billing/*.ts</span><span class="c-dim">→ </span><span class="c-gold">agent-2</span></div>
-          <div style="margin-top:8px;"><span class="c-olive">✓</span> <span style="color:#5A5248;">no conflicts detected</span></div>
+        <div class="term-body" id="demo-output" style="font-size:12px;min-height:280px;max-height:340px;overflow:auto;" aria-live="polite"></div>
+        <div class="demo-input-line">
+          <span class="c-prompt">$</span>
+          <span class="demo-input-wrap">
+            <span class="demo-ghost" id="demo-ghost" aria-hidden="true"></span>
+            <input id="demo-input" class="demo-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="try: sage board" aria-label="SAGE demo command input" />
+          </span>
         </div>
       </div>
-      <!-- Caveat callout -->
-      <div class="cav-g" aria-hidden="true"
-           style="font-size:19px;margin-top:10px;text-align:right;transform:rotate(2deg);display:inline-block;float:right;">← real output, no BS</div>
+      <div class="cav-g" aria-hidden="true" style="font-size:19px;margin-top:10px;text-align:right;transform:rotate(2deg);display:inline-block;float:right;">↓ real demo — type here</div>
     </div>
 
   </div>

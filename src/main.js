@@ -225,4 +225,18 @@
   }
 
   runHero()
+
+  // ── Lazy-mount the interactive PEEK demo when it nears the viewport ──
+  const peek = document.getElementById('peek')
+  if (peek) {
+    let mounted = false
+    const mountIfNear = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !mounted) {
+        mounted = true
+        mountIfNear.disconnect()
+        import('./demo/mount.js').then((m) => m.mountDemo(peek))
+      }
+    }, { rootMargin: '300px' })
+    mountIfNear.observe(peek)
+  }
 })()

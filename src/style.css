@@ -323,3 +323,21 @@ body::before {
   #hero-anim-wrapper { display:none !important; }
   #hero-static { display:block !important; }
 }
+
+/* ── interactive PEEK demo ── */
+.demo-run { display:block; width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:8px 10px; margin:0 0 6px; border-radius:6px; font:inherit; position:relative; transition:background .14s ease; }
+.demo-run:hover, .demo-run:focus-visible { background:rgba(200,151,47,.08); outline:none; }
+.demo-run .demo-run-tag { position:absolute; right:10px; opacity:0; color:#6B7A3A; font-family:'JetBrains Mono',monospace; font-size:11px; transition:opacity .14s ease; }
+.demo-run:hover .demo-run-tag, .demo-run:focus-visible .demo-run-tag { opacity:1; }
+.demo-randomize { margin-left:auto; background:rgba(200,151,47,.10); border:1px solid #3A3020; color:#C8972F; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; padding:4px 9px; border-radius:5px; cursor:pointer; transition:background .14s ease; }
+.demo-randomize:hover, .demo-randomize:focus-visible { background:rgba(200,151,47,.20); outline:none; }
+.demo-input-line { display:flex; align-items:center; gap:8px; padding:10px 14px; border-top:1px solid #1C1A16; font-family:'JetBrains Mono',monospace; font-size:12px; }
+.demo-input-wrap { position:relative; flex:1; }
+.demo-input { width:100%; background:none; border:none; color:#EFE7D8; font:inherit; caret-color:#C8972F; padding:0; }
+.demo-input:focus { outline:none; }
+.demo-ghost { position:absolute; left:0; top:0; color:#4A4438; pointer-events:none; white-space:pre; font:inherit; }
+#demo-terminal.demo-pulse .demo-input { animation:demoPulse 1s ease-in-out 2; }
+@keyframes demoPulse { 0%,100%{ caret-color:#C8972F; } 50%{ background:rgba(200,151,47,.10); } }
+.demo-out-cmd { color:#EFE7D8; }
+.demo-out-line { color:#9A9082; white-space:pre-wrap; }
+@media (max-width:560px){ .demo-run-tag{ display:none; } }
