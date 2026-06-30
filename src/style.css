@@ -110,6 +110,7 @@ body::before {
 .c-dim    { color: #4A4438; }
 .c-err    { color: #C0503A; }
 .c-cyan   { color: #4A8090; }
+.c-spin   { color: #C8972F; } /* active-row live spinner — gold, matches "active" (motion via JS, frozen for reduced-motion) */
 
 /* ════ Blinking cursor ════ */
 .cursor {

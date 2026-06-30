@@ -1,10 +1,25 @@
 import { createEngine } from './engine.js'
 import { highlight } from './highlight.js'
+import { SPINNER_FRAMES, SPINNER_INTERVAL_MS } from './spinner.js'
+
+// A board row for a session that's actively doing something. The leading ●
+// becomes a live spinner; everything else keeps a static ●. (Mirrors the CLI,
+// where the equivalent state is liveness 'working'.)
+export const isActiveRow = (line) => /^● .*\bactive\b/.test(line)
 
 // build colored spans from a line, XSS-safe (textContent per span)
 function paintInto(el, line) {
+  const active = isActiveRow(line)
+  let bulletSwapped = false
   for (const { text, cls } of highlight(line)) {
-    if (cls) {
+    if (active && !bulletSwapped && text === '●') {
+      // view concern (like color): swap the bullet for an animated spinner span
+      const s = document.createElement('span')
+      s.className = 'c-spin'
+      s.textContent = SPINNER_FRAMES[0]
+      el.appendChild(s)
+      bulletSwapped = true
+    } else if (cls) {
       const s = document.createElement('span')
       s.className = cls
       s.textContent = text
@@ -44,6 +59,16 @@ export function mountDemo(root) {
       out.appendChild(el)
     }
     out.scrollTop = out.scrollHeight
+  }
+
+  // One timer cycles every live spinner span. Querying the DOM each tick avoids
+  // stale refs when the output is reset/replaced. Frozen for reduced-motion.
+  if (!REDUCED) {
+    let frame = 0
+    setInterval(() => {
+      frame = (frame + 1) % SPINNER_FRAMES.length
+      for (const s of out.querySelectorAll('.c-spin')) s.textContent = SPINNER_FRAMES[frame]
+    }, SPINNER_INTERVAL_MS)
   }
 
   const exec = (line) => {
