@@ -12,3 +12,7 @@ docs/
 
 .vercel
 .DS_Store
+.env*
+
+# subagent-driven-development scratch
+.superpowers/
