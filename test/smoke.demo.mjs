@@ -26,5 +26,15 @@ await input.fill('cd /etc')
 await input.press('Enter')
 await p.waitForFunction(() => /sage|directories|path/i.test(document.querySelector('#demo-output').textContent))
 
+// install tabs: npm default, switching reveals the right command
+await p.locator('#tab-npm').scrollIntoViewIfNeeded()
+if (await p.locator('#panel-npm').isHidden()) throw new Error('npm panel should be visible by default')
+if (!(await p.locator('#panel-git').isHidden())) throw new Error('git panel should be hidden by default')
+await p.locator('#tab-git').click()
+await p.waitForFunction(() => !document.querySelector('#panel-git').hidden && document.querySelector('#panel-npm').hidden)
+if (!(await p.locator('#panel-git').getByText('git clone https://github.com/muslewski/agentic-sage.git').isVisible())) {
+  throw new Error('git clone command not visible after selecting git tab')
+}
+
 console.log('SMOKE PASS')
 await b.close()
