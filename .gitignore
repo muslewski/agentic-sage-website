@@ -9,6 +9,7 @@ dist-ssr
 
 # internal planning docs (kept out of the public marketing repo)
 docs/
+advisor-plans/
 
 .vercel
 .DS_Store
