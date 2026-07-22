@@ -72,3 +72,17 @@ PNG/JPG in markup.** This is the convention; follow it for every image added lat
 
 `picture { display: block; }` (in `src/style.css`) lets the inner `<img width:100%>` fill its frame.
 Quality/speed knobs live at the top of `scripts/optimize-image.sh`.
+
+## Documentation site
+
+Product docs are **not** authored here. Source of truth is the sibling package:
+
+`../agentic-sage/docs/`
+
+```bash
+npm run docs:build   # → generated/docs/
+npm run dev          # predev builds docs; open http://localhost:5173/docs/
+npm run build        # SSG marketing + docs → dist/docs/
+```
+
+Style: `src/docs.css` (SAGE gold / dark / mono — matches homepage).

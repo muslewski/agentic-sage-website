@@ -11,6 +11,9 @@ dist-ssr
 docs/
 advisor-plans/
 
+# generated product docs (from sibling agentic-sage/docs via scripts/build-docs.mjs)
+generated/
+
 .vercel
 .DS_Store
 .env*
