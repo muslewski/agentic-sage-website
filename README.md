@@ -75,9 +75,14 @@ Quality/speed knobs live at the top of `scripts/optimize-image.sh`.
 
 ## Documentation site
 
-Product docs are **not** authored here. Source of truth is the sibling package:
+Product docs are **not** authored here. Source of truth is the product package
+[`agentic-sage/docs/`](https://github.com/muslewski/agentic-sage/tree/main/docs).
 
-`../agentic-sage/docs/`
+**Resolve order** (`scripts/build-docs.mjs`):
+
+1. `DOCS_ROOT` env (path to a docs tree)
+2. Sibling `../agentic-sage/docs` (local monorepo layout)
+3. Shallow-clone of the public product repo into `.cache/agentic-sage` (Vercel/CI)
 
 ```bash
 npm run docs:build   # → generated/docs/

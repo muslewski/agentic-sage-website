@@ -13,6 +13,7 @@ import {
   statSync,
   rmSync,
 } from "node:fs";
+import { execSync } from "node:child_process";
 import { join, dirname, relative, posix } from "node:path";
 import { fileURLToPath } from "node:url";
 import MarkdownIt from "markdown-it";
@@ -21,16 +22,76 @@ import anchor from "markdown-it-anchor";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SITE = join(__dirname, "..");
 const DEFAULT_DOCS = join(SITE, "..", "agentic-sage", "docs");
-const DOCS_ROOT = process.env.DOCS_ROOT
-  ? join(process.cwd(), process.env.DOCS_ROOT)
-  : DEFAULT_DOCS;
+const DEFAULT_PKG = join(SITE, "..", "agentic-sage", "package.json");
+const PRODUCT_REPO = "https://github.com/muslewski/agentic-sage.git";
 const OUT = join(SITE, "generated", "docs");
-const PKG_JSON = join(SITE, "..", "agentic-sage", "package.json");
 
 function die(msg) {
   console.error(`build-docs: ${msg}`);
   process.exit(1);
 }
+
+/**
+ * Resolve product docs tree.
+ * Local monorepo: ../agentic-sage/docs
+ * Vercel/CI (site-only repo): shallow-clone public product repo into .cache/
+ * Override: DOCS_ROOT=path (relative to cwd or absolute)
+ */
+function resolveProductDocs() {
+  if (process.env.DOCS_ROOT) {
+    const root = process.env.DOCS_ROOT.startsWith("/")
+      ? process.env.DOCS_ROOT
+      : join(process.cwd(), process.env.DOCS_ROOT);
+    if (!existsSync(root)) {
+      die(`DOCS_ROOT not found: ${root}`);
+    }
+    return {
+      docsRoot: root,
+      pkgJson: join(root, "..", "package.json"),
+      source: "DOCS_ROOT",
+    };
+  }
+
+  if (existsSync(DEFAULT_DOCS)) {
+    return {
+      docsRoot: DEFAULT_DOCS,
+      pkgJson: DEFAULT_PKG,
+      source: "sibling",
+    };
+  }
+
+  // Site-only deploy (Vercel): product package is not a sibling.
+  const cacheRoot = join(SITE, ".cache", "agentic-sage");
+  const cachedDocs = join(cacheRoot, "docs");
+  if (!existsSync(cachedDocs)) {
+    console.error(
+      "build-docs: sibling agentic-sage/docs missing — shallow-cloning public product repo…",
+    );
+    mkdirSync(join(SITE, ".cache"), { recursive: true });
+    rmSync(cacheRoot, { recursive: true, force: true });
+    try {
+      execSync(`git clone --depth 1 ${PRODUCT_REPO} "${cacheRoot}"`, {
+        stdio: "inherit",
+      });
+    } catch (err) {
+      die(
+        `failed to clone ${PRODUCT_REPO}: ${err.message}\n` +
+          "Clone agentic-sage as a sibling or set DOCS_ROOT.",
+      );
+    }
+  }
+  if (!existsSync(cachedDocs)) {
+    die(`clone completed but docs/ missing under ${cacheRoot}`);
+  }
+  return {
+    docsRoot: cachedDocs,
+    pkgJson: join(cacheRoot, "package.json"),
+    source: "clone",
+  };
+}
+
+const { docsRoot: DOCS_ROOT, pkgJson: PKG_JSON, source: DOCS_SOURCE } =
+  resolveProductDocs();
 
 function walkMd(dir, acc = []) {
   for (const name of readdirSync(dir)) {
@@ -237,6 +298,7 @@ function pageShell({ title, description, version, sidebarHtml, bodyHtml, current
 if (!existsSync(DOCS_ROOT)) {
   die(`docs root not found: ${DOCS_ROOT}\nSet DOCS_ROOT or clone agentic-sage as sibling.`);
 }
+console.error(`build-docs: source=${DOCS_SOURCE} root=${DOCS_ROOT}`);
 
 let version = "0.0.0";
 try {

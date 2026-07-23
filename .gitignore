@@ -14,6 +14,9 @@ advisor-plans/
 # generated product docs (from sibling agentic-sage/docs via scripts/build-docs.mjs)
 generated/
 
+# Vercel/CI shallow clone of muslewski/agentic-sage (docs SSG source)
+.cache/
+
 .vercel
 .DS_Store
 .env*
