@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAGE — Session Awareness &amp; Guidance Engine</title>
-  <meta name="description" content="SAGE — a passive, read-only judge for fleets of parallel AI coding sessions. One judge per repo. Zero dependencies. Watches everything, changes nothing.">
+  <meta name="description" content="SAGE — passive fleet judge for parallel AI coding sessions. CLI works out of the box so sessions orient around each other; optional sage judge run turns answers into a living AI judge.">
 
   <!-- ▸ SITE URL — sage.muslewski.com (custom domain on Vercel) -->
   <link rel="canonical" href="https://sage.muslewski.com/">
@@ -22,7 +22,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SAGE">
   <meta property="og:title" content="SAGE — Session Awareness &amp; Guidance Engine">
-  <meta property="og:description" content="A passive, read-only judge for fleets of parallel AI coding sessions. One judge per repo. Watches everything, changes nothing.">
+  <meta property="og:description" content="CLI out of the box — sessions orient around each other. Optional live judge pane makes those answers a real AI judge. Passive-only. Zero dependencies.">
   <meta property="og:url" content="https://sage.muslewski.com/">
   <meta property="og:image" content="https://sage.muslewski.com/og.jpg">
   <meta property="og:image:width" content="1200">
@@ -32,7 +32,7 @@
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SAGE — Session Awareness &amp; Guidance Engine">
-  <meta name="twitter:description" content="A passive, read-only judge for fleets of parallel AI coding sessions. One judge per repo. Watches everything, changes nothing.">
+  <meta name="twitter:description" content="CLI out of the box — sessions orient around each other. Optional live judge pane makes those answers a real AI judge.">
   <meta name="twitter:image" content="https://sage.muslewski.com/og.jpg">
   <meta name="twitter:image:alt" content="SAGE — fleet judge for parallel AI coding sessions">
 
@@ -331,6 +331,112 @@
       </picture>
     </div>
   </div>
+</section>
+
+<hr class="divider">
+
+
+<!-- ════════════════════════════ TWO LAYERS — CLI out of the box + live judge (NEW) ════════════════════════════ -->
+<section id="two-layers" style="padding:clamp(72px,9vw,130px) 24px;max-width:1160px;margin:0 auto;">
+
+  <div class="reveal" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:18px;">
+    <div class="sec-label" style="margin-bottom:0;">// session communication</div>
+    <span class="badge" style="background:rgba(255,105,180,0.12);color:#FF8DC7;border:1px solid rgba(255,105,180,0.28);letter-spacing:0.12em;">NEW · live judge</span>
+  </div>
+
+  <h2 class="reveal reveal-d1" style="font-family:Anton,sans-serif;font-size:clamp(28px,5vw,56px);color:#EFE7D8;line-height:1.05;letter-spacing:0.02em;margin-bottom:18px;">
+    CLI works out of the box.<br>
+    <span class="gold-glow">Go further with a living judge.</span>
+  </h2>
+
+  <p class="reveal reveal-d2" style="font-size:15px;color:#6A6058;line-height:1.85;max-width:640px;margin-bottom:40px;">
+    Once configured, you already benefit from SAGE — every coding session can orient itself around the others through the CLI. That’s layer&nbsp;1. Layer&nbsp;2 is optional: start a passive judge pane in the background, and those same CLI answers become a real AI judge.
+  </p>
+
+  <div class="g2-start reveal reveal-d2" style="gap:clamp(24px,4vw,36px);margin-bottom:36px;">
+
+    <!-- Layer 1 -->
+    <div class="pillar-card" style="padding:28px 26px;border-color:#2A261E;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#C8972F;letter-spacing:0.14em;text-transform:uppercase;">Layer 1 · always on</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5248;letter-spacing:0.08em;">after install + sage on</span>
+      </div>
+      <h3 style="font-family:Anton,sans-serif;font-size:clamp(22px,3vw,28px);color:#EFE7D8;letter-spacing:0.03em;margin-bottom:12px;">Sensor CLI</h3>
+      <p style="font-size:14px;color:#6A6058;line-height:1.75;margin-bottom:18px;">
+        Deterministic facts only — who is live, who claims which paths, why branches diverged. Sessions use <span class="c-cmd" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#C8972F;">board</span>, <span class="c-cmd" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#C8972F;">territory</span>, <span class="c-cmd" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#C8972F;">merge-brief</span> and orient around each other. No extra pane required.
+      </p>
+      <div class="terminal" style="box-shadow:none;">
+        <div class="terminal-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="term-title">worker session</span>
+        </div>
+        <div class="term-body" style="font-size:11px;min-height:auto;">
+          <div><span class="c-prompt">$</span> <span class="c-cmd">sage territory 'src/auth/**'</span></div>
+          <div><span class="c-olive">clear</span> <span class="c-dim">— no other live claim</span></div>
+          <div style="height:6px;"></div>
+          <div><span class="c-prompt">$</span> <span class="c-cmd">sage merge-brief</span></div>
+          <div><span class="c-dim">facts only · contested paths listed</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 2 -->
+    <div class="pillar-card" style="padding:28px 26px;border-color:rgba(200,151,47,0.35);box-shadow:0 0 0 1px rgba(200,151,47,0.08),0 12px 40px rgba(0,0,0,0.35);">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#FF8DC7;letter-spacing:0.14em;text-transform:uppercase;">Layer 2 · optional</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#C8972F;letter-spacing:0.08em;">one background pane</span>
+      </div>
+      <h3 style="font-family:Anton,sans-serif;font-size:clamp(22px,3vw,28px);color:#EFE7D8;letter-spacing:0.03em;margin-bottom:12px;">Living judge</h3>
+      <p style="font-size:14px;color:#6A6058;line-height:1.75;margin-bottom:18px;">
+        Start a passive agent session that watches the fleet and publishes short briefs into the same store. Workers keep the same CLI verbs — but answers gain narrative and per-audience advice. That’s what makes the CLI an <em style="color:#EFE7D8;font-style:normal;">actual AI judge</em>.
+      </p>
+      <div class="terminal" style="box-shadow:none;">
+        <div class="terminal-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="term-title">desk · judge pane</span>
+        </div>
+        <div class="term-body" style="font-size:11px;min-height:auto;">
+          <div class="cmd-row" onclick="copyCmd(this)" data-cmd="sage judge run" role="button" tabindex="0" aria-label="Copy command: sage judge run" style="cursor:pointer;">
+            <span class="c-prompt">$</span> <span class="c-cmd">sage judge run</span>
+          </div>
+          <div><span class="c-cmt"># auto scope · watches in the background</span></div>
+          <div style="height:6px;"></div>
+          <div><span class="c-gold">⚖</span> <span class="c-dim">live · briefs layer onto territory / merge-brief</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Convention strip -->
+  <div class="reveal reveal-d3 terminal" style="max-width:100%;">
+    <div class="terminal-bar">
+      <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+      <span class="term-title">the easy convention</span>
+    </div>
+    <div class="term-body" style="font-size:12px;min-height:auto;">
+      <div style="display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,28px);align-items:flex-start;">
+        <div style="flex:1;min-width:200px;">
+          <div class="c-cmt" style="margin-bottom:8px;">// out of the box</div>
+          <div><span class="c-prompt">$</span> <span class="c-cmd">sage on</span></div>
+          <div style="color:#5A5248;margin-top:6px;line-height:1.6;">Sessions already orient around each other via the CLI. Collision awareness works. You already benefit.</div>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;color:#3A3428;padding-top:28px;font-size:18px;" aria-hidden="true">→</div>
+        <div style="flex:1;min-width:200px;">
+          <div class="c-cmt" style="margin-bottom:8px;">// go further</div>
+          <div><span class="c-prompt">$</span> <span class="c-cmd">sage judge run</span></div>
+          <div style="color:#5A5248;margin-top:6px;line-height:1.6;">One passive watcher. Same store, same verbs — now with a living AI judge behind the answers.</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #1E1C16;margin-top:18px;padding-top:14px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;">
+        <span style="color:#5A5248;font-size:12px;">Facts stay authoritative · briefs layer when fresh · no second protocol</span>
+        <a href="https://github.com/muslewski/agentic-sage/blob/main/docs/recipes/live-judge.md" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C8972F;text-decoration:none;letter-spacing:0.04em;">Live judge recipe →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal reveal-d3 ann" style="font-size:20px;margin-top:22px;text-align:right;opacity:0.75;">↳ install once · elevate when the desk gets busy</div>
+
 </section>
 
 <hr class="divider">
