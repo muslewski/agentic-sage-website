@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAGE — Session Awareness &amp; Guidance Engine</title>
-<meta name="description" content="SAGE — passive fleet judge for parallel AI coding sessions. CLI works out of the box so sessions orient around each other; optional sage judge run turns answers into a living AI judge.">
+  <title>SAGE — Icons · medallion</title>
+  <meta name="robots" content="noindex">
+  <meta name="description" content="SAGE — passive fleet judge for parallel AI coding sessions. CLI works out of the box so sessions orient around each other; optional sage judge run turns answers into a living AI judge.">
 
   <!-- ▸ SITE URL — sage.muslewski.com (custom domain on Vercel) -->
   <link rel="canonical" href="https://sage.muslewski.com/">
@@ -186,158 +187,15 @@
 </style>
 
 
-<style id="icon-hybrid">
-  .pillar-icon {
-    width: 53px;
-    height: 53px;
-    object-fit: contain;
-    display: block;
-    margin: 2px 0 12px;
-    filter: drop-shadow(0 4px 12px rgba(200,151,47,0.18));
-  }
-  .layer-icon {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    flex-shrink: 0;
-    filter: drop-shadow(0 4px 12px rgba(200,151,47,0.18));
-  }
-  .layer-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .layer-head-text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-  }
-</style>
-
-
-<style id="note-as-note">
-  /* Clean note — same palette, no top chrome artifacts */
-  #contact .note-plate.note-real {
-    position: relative;
-    max-width: 560px;
-    margin: 0 auto;
-    background: #1A1714;
-    border: 2px solid #C8972F;
-    border-radius: 4px;
-    box-shadow:
-      0 18px 50px rgba(0,0,0,0.55),
-      0 0 0 1px rgba(200,151,47,0.12),
-      6px 8px 0 rgba(200,151,47,0.10);
-    padding: clamp(28px,4vw,44px) clamp(26px,4.5vw,46px);
-    transform: rotate(-1.2deg);
-    overflow: hidden;
-  }
-  /* kill global paper-tex / frame-paper grain on this plate — it stacks badly */
-  #contact .note-plate.note-real.paper-tex::after,
-  #contact .note-plate.note-real.frame-paper::after {
-    display: none !important;
-  }
-  /* soft internal grain only */
-  #contact .note-plate.note-real::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image: url('/assets/imagine/ambient/tex-paper.jpg');
-    background-size: 280px 280px;
-    mix-blend-mode: soft-light;
-    opacity: 0.14;
-  }
-  #contact .note-plate.note-real::after { display: none; }
-
-  #contact .note-plate.note-real > * { position: relative; z-index: 1; }
-
-  #contact .note-meta {
-    font-family: 'Caveat', cursive;
-    font-size: 17px;
-    color: #6B7A3A;
-    margin: 0 0 10px;
-    letter-spacing: 0.02em;
-  }
-  #contact .note-lead {
-    font-family: 'Caveat', cursive;
-    font-size: clamp(30px,4.8vw,46px);
-    line-height: 1.04;
-    color: #C8972F;
-    margin-bottom: 16px;
-    text-shadow: 0 0 28px rgba(200,151,47,0.20);
-  }
-  #contact .note-body {
-    font-family: 'Caveat', cursive;
-    font-size: clamp(20px,2.3vw,24px);
-    line-height: 1.55;
-    color: #C9BFB1;
-    margin-bottom: 12px;
-    font-weight: 500;
-  }
-  #contact .note-rows {
-    margin-top: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  #contact .note-row {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    width: fit-content;
-    max-width: 100%;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.5px;
-    color: #EFE7D8;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 9px 12px;
-    border-radius: 6px;
-    border: 1px dashed rgba(200,151,47,0.28);
-    background: rgba(14,13,12,0.35);
-    transition: background 0.15s ease, border-color 0.15s ease;
-  }
-  #contact .note-row:hover,
-  #contact .note-row:focus-visible {
-    background: rgba(200,151,47,0.10);
-    border-color: rgba(200,151,47,0.55);
-    outline: none;
-  }
-  #contact .note-row .gl { color: #6B7A3A; font-size: 15px; flex-shrink: 0; }
-  #contact .note-row .copy-icon { color: #6A6058; margin-left: 4px; }
-
-  #contact .note-sign {
-    display: block;
-    text-align: right;
-    margin-top: 22px;
-    font-family: 'Caveat', cursive;
-    font-size: 28px;
-    color: #C8972F;
-    text-decoration: none;
-    opacity: 0.9;
-    transform: rotate(-1.5deg);
-  }
-  #contact .note-sign:hover { opacity: 1; }
-  #contact .note-ps {
-    margin-top: 6px;
-    font-family: 'Caveat', cursive;
-    font-size: 17px;
-    color: #6A6058;
-    text-align: right;
-    transform: rotate(-1deg);
-  }
-  @media (max-width: 560px) {
-    #contact .note-plate.note-real { transform: rotate(-0.5deg); }
-  }
+<style id="icon-variant-medallion">
+  .pillar-icon { width:44px;height:44px;object-fit:contain;display:block;margin:2px 0 12px;filter:drop-shadow(0 4px 12px rgba(200,151,47,0.18)); }
+  .layer-icon { width:40px;height:40px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(200,151,47,0.18)); }
+  .layer-head { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px; }
+  .layer-head-text { display:flex;flex-direction:column;gap:4px;min-width:0; }
 </style>
 
 </head>
-<body class="ambient-merge">
+<body class="icon-style-medallion" class="ambient-merge">
 
 <!-- ════════════════════════════ NAV (v8 backdrop-blur + paper texture) ════════════════════════════ -->
 <nav class="paper-tex nav-paper" style="position:sticky;top:0;z-index:100;background:rgba(14,13,12,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #1C1A16;">
@@ -346,7 +204,9 @@
       <img src="/favicon.svg" alt="" width="30" height="30" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 9px rgba(200,151,47,0.32));">
       <span style="font-family:Anton,sans-serif;font-size:26px;color:#C8972F;letter-spacing:0.12em;text-shadow:0 0 10px rgba(200,151,47,0.3);">SAGE</span>
       <span class="nav-tag" style="font-size:10px;color:#2E2A22;letter-spacing:0.10em;font-family:'JetBrains Mono',monospace;white-space:nowrap;">// fleet judge</span>
-      </span>
+      <span style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;color:#C8972F;border:1px solid rgba(200,151,47,0.35);padding:3px 9px;border-radius:999px;white-space:nowrap;background:rgba(200,151,47,0.08);">icons · medallion</span>
+      <a href="/explorations/" style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#6A6058;text-decoration:none;letter-spacing:0.06em;white-space:nowrap;">← explorations</a>
+      <span style="display:inline-flex;gap:5px;align-items:center;flex-wrap:wrap;"><a href="/explorations/v20a-icons-line.html" style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;text-decoration:none;white-space:nowrap;padding:3px 8px;border-radius:999px;border:1px solid #2A261E;color:#6A6058;background:transparent;">line</a><a href="/explorations/v20b-icons-medallion.html" style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;text-decoration:none;white-space:nowrap;padding:3px 8px;border-radius:999px;border:1px solid rgba(200,151,47,0.55);color:#C8972F;background:rgba(200,151,47,0.10);">medallion</a><a href="/explorations/v20c-icons-ink.html" style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;text-decoration:none;white-space:nowrap;padding:3px 8px;border-radius:999px;border:1px solid #2A261E;color:#6A6058;background:transparent;">ink</a></span>
     </div>
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end;">
       <a href="/docs/" class="nav-demo" title="Product documentation" aria-label="Open SAGE documentation" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C8972F;text-decoration:none;letter-spacing:0.04em;white-space:nowrap;">Docs</a>
@@ -663,7 +523,7 @@
           <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#C8972F;letter-spacing:0.14em;text-transform:uppercase;">Layer 1 · always on</span>
           <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5A5248;letter-spacing:0.08em;">after install + sage on</span>
         </div>
-        <img class="layer-icon" src="/assets/imagine/icons/line/layer1.png" width="40" height="40" alt="" loading="lazy">
+        <img class="layer-icon" src="/assets/imagine/icons/medallion/layer1.png" width="40" height="40" alt="" loading="lazy">
       </div>
       <h3 style="font-family:Anton,sans-serif;font-size:clamp(22px,3vw,28px);color:#EFE7D8;letter-spacing:0.03em;margin-bottom:12px;">Sensor CLI</h3>
       <p style="font-size:14px;color:#6A6058;line-height:1.75;margin-bottom:18px;">
@@ -691,7 +551,7 @@
           <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#FF8DC7;letter-spacing:0.14em;text-transform:uppercase;">Layer 2 · optional</span>
           <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#C8972F;letter-spacing:0.08em;">one background pane</span>
         </div>
-        <img class="layer-icon" src="/assets/imagine/icons/line/layer2.png" width="40" height="40" alt="" loading="lazy">
+        <img class="layer-icon" src="/assets/imagine/icons/medallion/layer2.png" width="40" height="40" alt="" loading="lazy">
       </div>
       <h3 style="font-family:Anton,sans-serif;font-size:clamp(22px,3vw,28px);color:#EFE7D8;letter-spacing:0.03em;margin-bottom:12px;">Living judge</h3>
       <p style="font-size:14px;color:#6A6058;line-height:1.75;margin-bottom:18px;">
@@ -789,14 +649,14 @@
         <div class="pillar-card reveal reveal-d1" style="transform:rotate(-0.5deg);">
           <div style="font-size:10px;color:#C8972F;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// 01</div>
           
-          <img class="pillar-icon" src="/assets/imagine/icons/ink/passive.png" width="53" height="53" alt="" loading="lazy">
+          <img class="pillar-icon" src="/assets/imagine/icons/medallion/passive.png" width="44" height="44" alt="" loading="lazy">
           <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:#EFE7D8;">Passive by design</div>
           <p style="font-size:13px;line-height:1.65;color:#6A6058;">Watches and answers. Never edits, spawns, or blocks. Your fleet keeps moving; SAGE keeps score.</p>
         </div>
         <div class="pillar-card reveal reveal-d2" style="transform:rotate(0.4deg);">
           <div style="font-size:10px;color:#C8972F;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// 02</div>
           
-          <img class="pillar-icon" src="/assets/imagine/icons/ink/readonly.png" width="53" height="53" alt="" loading="lazy">
+          <img class="pillar-icon" src="/assets/imagine/icons/medallion/readonly.png" width="44" height="44" alt="" loading="lazy">
           <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:#EFE7D8;">Read-only &amp; safe</div>
           <p style="font-size:13px;line-height:1.65;color:#6A6058;">It cannot change your repo. Ever. No hooks that write, no side effects, no surprises.</p>
           <div class="cav-g" style="font-size:17px;margin-top:8px;">sworn to read</div>
@@ -804,28 +664,28 @@
         <div class="pillar-card reveal reveal-d1" style="transform:rotate(0.3deg);">
           <div style="font-size:10px;color:#C8972F;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// 03</div>
           
-          <img class="pillar-icon" src="/assets/imagine/icons/ink/zero-dep.png" width="53" height="53" alt="" loading="lazy">
+          <img class="pillar-icon" src="/assets/imagine/icons/medallion/zero-dep.png" width="44" height="44" alt="" loading="lazy">
           <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:#EFE7D8;">Zero-dependency</div>
           <p style="font-size:13px;line-height:1.65;color:#6A6058;">One Node CLI, no install bloat. Clone and run. Your <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C8972F;background:rgba(200,151,47,0.08);padding:1px 5px;border-radius:2px;">package.json</code> stays untouched.</p>
         </div>
         <div class="pillar-card reveal reveal-d2" style="transform:rotate(-0.4deg);">
           <div style="font-size:10px;color:#C8972F;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// 04</div>
           
-          <img class="pillar-icon" src="/assets/imagine/icons/ink/default-off.png" width="53" height="53" alt="" loading="lazy">
+          <img class="pillar-icon" src="/assets/imagine/icons/medallion/default-off.png" width="44" height="44" alt="" loading="lazy">
           <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:#EFE7D8;">Default-off</div>
           <p style="font-size:13px;line-height:1.65;color:#6A6058;">Installing changes nothing until <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C8972F;background:rgba(200,151,47,0.08);padding:1px 5px;border-radius:2px;">sage on</code>. Try it without committing to it.</p>
         </div>
         <div class="pillar-card reveal reveal-d1" style="transform:rotate(-0.6deg);">
           <div style="font-size:10px;color:#C8972F;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// 05</div>
           
-          <img class="pillar-icon" src="/assets/imagine/icons/ink/fail-open.png" width="53" height="53" alt="" loading="lazy">
+          <img class="pillar-icon" src="/assets/imagine/icons/medallion/fail-open.png" width="44" height="44" alt="" loading="lazy">
           <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:#EFE7D8;">Fail-open</div>
           <p style="font-size:13px;line-height:1.65;color:#6A6058;">Any error in the optional guard allows the action through. SAGE is never in your way — even broken.</p>
         </div>
         <div class="pillar-card reveal reveal-d2" style="transform:rotate(0.5deg);">
           <div style="font-size:10px;color:#C8972F;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// 06</div>
           
-          <img class="pillar-icon" src="/assets/imagine/icons/ink/hotpath.png" width="53" height="53" alt="" loading="lazy">
+          <img class="pillar-icon" src="/assets/imagine/icons/medallion/hotpath.png" width="44" height="44" alt="" loading="lazy">
           <div style="font-weight:600;margin-bottom:8px;font-size:14px;color:#EFE7D8;">Hot-path-cheap</div>
           <p style="font-size:13px;line-height:1.65;color:#6A6058;">When idle the hook short-circuits instantly. Zero cost on the commits that matter most.</p>
           <div class="cav-ol" style="font-size:17px;margin-top:8px;">literally free when idle</div>
@@ -960,12 +820,12 @@
 <!-- ════════════════════════════ CONTACT — the creator's note (handwritten plate, pinned askew) ════════════════════════════ -->
 <section id="contact" style="padding:clamp(56px,8vw,104px) 24px clamp(76px,10vw,128px);max-width:820px;margin:0 auto;">
   <div class="reveal">
-    <div class="note-plate paper-tex frame-paper note-real">
-      <div class="note-meta">from the desk · beta</div>
+    <div class="note-plate paper-tex frame-paper">
+
       <div class="note-lead">A note from the creator</div>
 
       <p class="note-body">SAGE is in beta — early, active development. It works (I run it daily), but expect rough edges, and expect things to change as it finds its shape.</p>
-      <p class="note-body">I'm building it in the open, and I'd genuinely love to hear from you — a bug, a question, a half-formed idea, or just hello.</p>
+      <p class="note-body">I'm building it in the open, and I'd genuinely love to hear from you. A bug, a question, a half-formed idea, or just hello — any form of contact is welcome. Nothing is too small.</p>
 
       <div class="note-rows">
         <div class="note-row" onclick="copyCmd(this)" data-cmd="kontakt@muslewski.com" role="button" tabindex="0" aria-label="Copy email address">
@@ -980,7 +840,7 @@
       </div>
 
       <a class="note-sign" href="https://muslewski.com/" target="_blank" rel="noopener">~ Mateusz</a>
-      <div class="note-ps" aria-hidden="true">p.s. write anytime ✦</div>
+
     </div>
   </div>
 </section>

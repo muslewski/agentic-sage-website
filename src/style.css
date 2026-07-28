@@ -500,3 +500,146 @@ nav.nav-paper {
   .copy-block { background: rgba(14, 12, 10, 0.92); }
   nav.nav-paper { background: rgba(14, 13, 12, 0.94); }
 }
+
+
+/* ════ Hybrid icons (v21 — ink pillars + line layers) ════ */
+.pillar-icon {
+  width: 53px;
+  height: 53px;
+  object-fit: contain;
+  display: block;
+  margin: 2px 0 12px;
+  filter: drop-shadow(0 4px 12px rgba(200,151,47,0.18));
+}
+.layer-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(200,151,47,0.18));
+}
+.layer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.layer-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+
+/* ════ Creator note (v21 — handwritten desk note) ════ */
+#contact .note-plate.note-real {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+  background: #1A1714;
+  border: 2px solid #C8972F;
+  border-radius: 4px;
+  box-shadow:
+    0 18px 50px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(200,151,47,0.12),
+    6px 8px 0 rgba(200,151,47,0.10);
+  padding: clamp(28px,4vw,44px) clamp(26px,4.5vw,46px);
+  transform: rotate(-1.2deg);
+  overflow: hidden;
+}
+#contact .note-plate.note-real.paper-tex::after,
+#contact .note-plate.note-real.frame-paper::after {
+  display: none !important;
+}
+#contact .note-plate.note-real::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url('/assets/imagine/ambient/tex-paper.jpg');
+  background-size: 280px 280px;
+  mix-blend-mode: soft-light;
+  opacity: 0.14;
+}
+#contact .note-plate.note-real::after { display: none; }
+#contact .note-plate.note-real > * { position: relative; z-index: 1; }
+#contact .note-meta {
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #6B7A3A;
+  margin: 0 0 10px;
+  letter-spacing: 0.02em;
+}
+#contact .note-lead {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(30px,4.8vw,46px);
+  line-height: 1.04;
+  color: #C8972F;
+  margin-bottom: 16px;
+  text-shadow: 0 0 28px rgba(200,151,47,0.20);
+}
+#contact .note-body {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(20px,2.3vw,24px);
+  line-height: 1.55;
+  color: #C9BFB1;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+#contact .note-rows {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#contact .note-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: fit-content;
+  max-width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: #EFE7D8;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: 1px dashed rgba(200,151,47,0.28);
+  background: rgba(14,13,12,0.35);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+#contact .note-row:hover,
+#contact .note-row:focus-visible {
+  background: rgba(200,151,47,0.10);
+  border-color: rgba(200,151,47,0.55);
+  outline: none;
+}
+#contact .note-row .gl { color: #6B7A3A; font-size: 15px; flex-shrink: 0; }
+#contact .note-row .copy-icon { color: #6A6058; margin-left: 4px; }
+#contact .note-sign {
+  display: block;
+  text-align: right;
+  margin-top: 22px;
+  font-family: 'Caveat', cursive;
+  font-size: 28px;
+  color: #C8972F;
+  text-decoration: none;
+  opacity: 0.9;
+  transform: rotate(-1.5deg);
+}
+#contact .note-sign:hover { opacity: 1; }
+#contact .note-ps {
+  margin-top: 6px;
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: #6A6058;
+  text-align: right;
+  transform: rotate(-1deg);
+}
+@media (max-width: 560px) {
+  #contact .note-plate.note-real { transform: rotate(-0.5deg); }
+}
