@@ -5,16 +5,23 @@
   "type": "module",
   "scripts": {
     "docs:build": "node scripts/build-docs.mjs",
-    "predev": "node scripts/build-docs.mjs",
+    "predev": "atlas gate && node scripts/build-docs.mjs",
     "prebuild": "node scripts/build-docs.mjs",
     "dev": "vite",
     "build": "vite build && node scripts/postbuild-docs.mjs",
     "preview": "vite preview",
-    "test": "node --test test/*.test.mjs test/**/*.test.mjs"
+    "test": "node --test test/*.test.mjs test/**/*.test.mjs",
+    "atlas": "atlas",
+    "atlas:gate": "atlas gate",
+    "atlas:doctor": "atlas doctor",
+    "atlas:wire": "atlas wire all",
+    "mind:check": "atlas check",
+    "mind:build": "atlas build"
   },
   "devDependencies": {
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",
+    "memory-atlas": "^0.5.2",
     "vite": "^6.0.7"
   }
 }
