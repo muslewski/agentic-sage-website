@@ -16,7 +16,8 @@
     "atlas:doctor": "atlas doctor",
     "atlas:wire": "atlas wire all",
     "mind:check": "atlas check",
-    "mind:build": "atlas build"
+    "mind:build": "atlas build",
+    "//sage-gate": "global only — sage gate (preferred judge) is machine-level; not chained into predev. run: sage gate"
   },
   "devDependencies": {
     "markdown-it": "^14.1.0",
