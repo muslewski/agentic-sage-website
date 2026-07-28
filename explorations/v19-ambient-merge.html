@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAGE — Session Awareness &amp; Guidance Engine</title>
+  <title>SAGE — ambient merge (section rhythm)</title>
+  <meta name="robots" content="noindex">
   <meta name="description" content="SAGE — passive fleet judge for parallel AI coding sessions. CLI works out of the box so sessions orient around each other; optional sage judge run turns answers into a living AI judge.">
 
   <!-- ▸ SITE URL — sage.muslewski.com (custom domain on Vercel) -->
@@ -43,16 +44,160 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<style id="ambient-merge-css">
+  /* Per-section atmosphere — scrolls with content (not fixed) */
+  .amb-band { position: relative; isolation: isolate; }
+  .amb-band > * { position: relative; z-index: 1; }
+  .amb-band::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    opacity: 0;
+  }
+  .amb-band::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+  }
+
+  .amb-band.amb-shafts::before {
+    background-image: url('/assets/imagine/ambient/bg-shafts.jpg');
+    mix-blend-mode: screen;
+    opacity: 0.26;
+  }
+  .amb-band.amb-shafts::after {
+    background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(200,151,47,0.07) 0%, transparent 55%);
+    opacity: 1;
+  }
+
+  /*
+   * ROOT CAUSE (hero shafts stopped below nav):
+   *   nav is a sticky sibling BEFORE .amb-band.amb-shafts, so at scrollY=0
+   *   glass nav only blurred body #0E0D0C — atmosphere started under the bar.
+   * FIX: pull the FIRST shafts band up under the nav (nav stays outside so
+   *   position:sticky still works at viewport level). Nav z-index:100 keeps it
+   *   above the band; glass fill lets shafts read through.
+   */
+  body.ambient-merge {
+    --nav-overlap: 4.5rem; /* ~ nav row + vertical padding */
+  }
+  .amb-band.amb-hero.amb-shafts {
+    margin-top: calc(-1 * var(--nav-overlap));
+    padding-top: var(--nav-overlap);
+  }
+  /* keep light shafts anchored to the top of the extended band (under nav) */
+  .amb-band.amb-hero.amb-shafts::before {
+    background-position: center top;
+  }
+  .amb-band.amb-hero.amb-shafts::after {
+    background: radial-gradient(ellipse 95% 75% at 50% 0%, rgba(200,151,47,0.09) 0%, transparent 58%);
+  }
+
+  .amb-band.amb-none::before,
+  .amb-band.amb-none::after { display: none; }
+
+  /* same dust recipe as CTA — soft starfield + paper fiber */
+  .amb-band.amb-dust::before {
+    background-image: url('/assets/imagine/ambient/bg-dust.jpg');
+    mix-blend-mode: screen;
+    opacity: 0.30;
+  }
+  .amb-band.amb-dust::after {
+    background-image: url('/assets/imagine/ambient/tex-paper.jpg');
+    background-size: 420px 420px;
+    background-repeat: repeat;
+    mix-blend-mode: soft-light;
+    opacity: 0.12;
+  }
+
+  .amb-band > hr.divider { position: relative; z-index: 1; margin: 0; }
+
+  /* ── glass surfaces (half strength — subtler frost) ── */
+  .terminal {
+    background-color: rgba(10, 9, 8, 0.72) !important;
+    backdrop-filter: blur(9px) saturate(1.05);
+    -webkit-backdrop-filter: blur(9px) saturate(1.05);
+    border-color: rgba(38, 32, 20, 0.85) !important;
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.50),
+      0 0 0 1px rgba(200, 151, 47, 0.07),
+      inset 0 1px 0 rgba(239, 231, 216, 0.03);
+  }
+  .terminal-bar {
+    background: rgba(22, 19, 16, 0.72) !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-bottom-color: rgba(37, 32, 24, 0.75) !important;
+  }
+
+  .pillar-card {
+    background: rgba(20, 17, 13, 0.68) !important;
+    backdrop-filter: blur(8px) saturate(1.05);
+    -webkit-backdrop-filter: blur(8px) saturate(1.05);
+    border-color: rgba(37, 32, 24, 0.8) !important;
+    box-shadow:
+      3px 3px 0 rgba(200, 151, 47, 0.09),
+      inset 0 1px 0 rgba(239, 231, 216, 0.03);
+  }
+  .pillar-card:hover {
+    border-color: rgba(200, 151, 47, 0.30) !important;
+    background: rgba(24, 20, 15, 0.78) !important;
+    box-shadow:
+      5px 5px 0 rgba(200, 151, 47, 0.14),
+      inset 0 1px 0 rgba(239, 231, 216, 0.04);
+  }
+
+  .copy-block {
+    background: rgba(14, 12, 10, 0.70) !important;
+    backdrop-filter: blur(7px) saturate(1.05);
+    -webkit-backdrop-filter: blur(7px) saturate(1.05);
+    border-color: rgba(34, 32, 24, 0.85) !important;
+    box-shadow: inset 0 1px 0 rgba(239, 231, 216, 0.025);
+  }
+  .copy-block:hover {
+    border-color: rgba(200, 151, 47, 0.28) !important;
+    background: rgba(18, 15, 12, 0.80) !important;
+  }
+
+  /* sticky nav — half frost */
+  nav.nav-paper {
+    background: rgba(14, 13, 12, 0.72) !important;
+    backdrop-filter: blur(9px) saturate(1.08) !important;
+    -webkit-backdrop-filter: blur(9px) saturate(1.08) !important;
+    border-bottom-color: rgba(28, 26, 22, 0.75) !important;
+  }
+
+  /* reduced-motion / no-blur fallback: stay readable */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .terminal { background-color: rgba(10, 9, 8, 0.92) !important; }
+    .pillar-card { background: rgba(20, 17, 13, 0.92) !important; }
+    .copy-block { background: rgba(14, 12, 10, 0.92) !important; }
+    nav.nav-paper { background: rgba(14, 13, 12, 0.94) !important; }
+  }
+
+</style>
+
 </head>
-<body>
+<body class="ambient-merge">
 
 <!-- ════════════════════════════ NAV (v8 backdrop-blur + paper texture) ════════════════════════════ -->
-<nav class="paper-tex nav-paper" style="position:sticky;top:0;z-index:100;">
+<nav class="paper-tex nav-paper" style="position:sticky;top:0;z-index:100;background:rgba(14,13,12,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #1C1A16;">
   <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:13px clamp(16px,4vw,28px);display:flex;align-items:center;justify-content:space-between;gap:12px;">
     <div style="display:flex;align-items:center;gap:14px;min-width:0;">
       <img src="/favicon.svg" alt="" width="30" height="30" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 9px rgba(200,151,47,0.32));">
       <span style="font-family:Anton,sans-serif;font-size:26px;color:#C8972F;letter-spacing:0.12em;text-shadow:0 0 10px rgba(200,151,47,0.3);">SAGE</span>
       <span class="nav-tag" style="font-size:10px;color:#2E2A22;letter-spacing:0.10em;font-family:'JetBrains Mono',monospace;white-space:nowrap;">// fleet judge</span>
+      <span style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;color:#C8972F;border:1px solid rgba(200,151,47,0.35);padding:3px 9px;border-radius:999px;white-space:nowrap;background:rgba(200,151,47,0.08);">ambient · tuned rhythm</span>
+      <a href="/explorations/" style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#6A6058;text-decoration:none;letter-spacing:0.06em;white-space:nowrap;">← explorations</a>
     </div>
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end;">
       <a href="/docs/" class="nav-demo" title="Product documentation" aria-label="Open SAGE documentation" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C8972F;text-decoration:none;letter-spacing:0.04em;white-space:nowrap;">Docs</a>
@@ -71,7 +216,7 @@
 
     <!-- LEFT: identity + CTAs (v6, mono) — vertically centered to match terminal -->
     <div style="font-family:'JetBrains Mono',monospace;align-self:center;">
-      <div class="hi hi-1 badge" style="margin-bottom:22px;"><span class="orn-spark" aria-hidden="true"></span>Open Source · Zero Dependencies</div>
+      <div class="hi hi-1 badge" style="margin-bottom:22px;">Open Source · Zero Dependencies</div>
       <div class="hi hi-2 wordmark">SAGE</div>
       <div class="hi hi-3" style="font-size:10px;color:#3A3428;letter-spacing:0.18em;text-transform:uppercase;margin-top:7px;margin-bottom:26px;">Session Awareness &amp; Guidance Engine</div>
 
@@ -186,10 +331,6 @@
 
 </div>
 <div class="amb-band amb-dust">
-
-<div class="orn-divider-wrap" aria-hidden="true" data-orn-for="<!-- ════════════════════════════ WHAT S">
-  <img class="orn-divider" src="/assets/imagine/ornaments/divider.jpg" width="1280" height="720" alt="">
-</div>
 <!-- ════════════════════════════ WHAT SAGE IS (v7 — enlarged mascot + editorial) ════════════════════════════ -->
 <section id="what-sage-is" style="padding:clamp(72px,9vw,130px) 24px;max-width:1160px;margin:0 auto;">
 
@@ -352,7 +493,7 @@
 
   <div class="reveal" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:18px;">
     <div class="sec-label" style="margin-bottom:0;">// session communication</div>
-    <span class="badge" style="background:rgba(255,105,180,0.12);color:#FF8DC7;border:1px solid rgba(255,105,180,0.28);letter-spacing:0.12em;"><span class="orn-spark" aria-hidden="true"></span>NEW · live judge</span>
+    <span class="badge" style="background:rgba(255,105,180,0.12);color:#FF8DC7;border:1px solid rgba(255,105,180,0.28);letter-spacing:0.12em;">NEW · live judge</span>
   </div>
 
   <h2 class="reveal reveal-d1" style="font-family:Anton,sans-serif;font-size:clamp(28px,5vw,56px);color:#EFE7D8;line-height:1.05;letter-spacing:0.02em;margin-bottom:18px;">
@@ -455,10 +596,6 @@
 
 </div>
 <div class="amb-band amb-dust">
-
-<div class="orn-divider-wrap" aria-hidden="true" data-orn-for="<!-- ════════════════════════════ SIX PI">
-  <img class="orn-divider" src="/assets/imagine/ornaments/divider.jpg" width="1280" height="720" alt="">
-</div>
 <!-- ════════════════════════════ SIX PILLARS (v9 layout — recolored v6 dark) ════════════════════════════ -->
 <section id="principles" style="padding:clamp(72px,9vw,112px) 0;">
 
@@ -604,8 +741,6 @@
 
   <div class="reveal reveal-d1" style="display:flex;justify-content:center;">
     <div class="plate-ink paper-tex frame-paper" style="position:relative;transform:rotate(-1.2deg);width:100%;box-shadow:10px 14px 0 rgba(200,151,47,0.20),0 32px 80px rgba(0,0,0,0.7);">
-      <div class="orn-corners" aria-hidden="true"></div>
-      <img class="orn-seal" src="/assets/imagine/ornaments/seal.jpg" width="256" height="256" alt="" aria-hidden="true">
       <picture>
         <source srcset="/assets/sage-banner.avif" type="image/avif">
         <source srcset="/assets/sage-banner.webp" type="image/webp">
@@ -622,10 +757,6 @@
 
 </div>
 <div class="amb-band amb-dust">
-
-<div class="orn-divider-wrap" aria-hidden="true" data-orn-for="<!-- ════════════════════════════ FINAL ">
-  <img class="orn-divider" src="/assets/imagine/ornaments/divider.jpg" width="1280" height="720" alt="">
-</div>
 <!-- ════════════════════════════ FINAL CTA (v7) ════════════════════════════ -->
 <section id="cta" style="padding:clamp(88px,11vw,150px) 24px;max-width:1160px;margin:0 auto;text-align:center;">
 
@@ -688,8 +819,7 @@
 </section>
 
 </div>
-<!-- ════════════════════════════ FOOTER (v9 — recolored v6 dark) ════════════════════════════ -->
-<footer style="background:#14110D;border-top:1px solid #1A1814;padding:28px 24px;">
+<!-- ════════════════════════════ FOOTER (v9 — recolored v6 dark) ════════════════════════════ --><footer style="background:#14110D;border-top:1px solid #1A1814;padding:28px 24px;">
   <div style="max-width:1160px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;">
     <div style="display:flex;align-items:center;gap:12px;">
       <img src="/favicon.svg" alt="" width="28" height="28" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(200,151,47,0.30));">

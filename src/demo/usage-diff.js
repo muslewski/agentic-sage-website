@@ -11,7 +11,12 @@ export function parseUsageCommands(usageSrc) {
     if (!line || line.startsWith('usage:')) continue
     // take the leading "label" before 2+ spaces (the description gap)
     const label = line.split(/\s{2,}/)[0]
-    for (const tok of label.split('|')) {
+    // Strip bracketed option groups before splitting on `|` so lines like
+    //   judge run [--harness auto|grok|claude|none]
+    // do not invent top-level commands "grok" / "claude" / "none".
+    // `on | off` stays intact (no brackets).
+    const bare = label.replace(/\[[^\]]*\]/g, ' ')
+    for (const tok of bare.split('|')) {
       const head = tok.trim().split(/\s+/)[0] // first word = command; drops <args>
       if (head && /^[a-z][a-z-]*$/.test(head)) cmds.add(head)
     }

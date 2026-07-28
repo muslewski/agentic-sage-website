@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAGE — Session Awareness &amp; Guidance Engine</title>
+  <title>SAGE — Illuminated Manuscript (Imagine v15)</title>
+  <meta name="robots" content="noindex">
   <meta name="description" content="SAGE — passive fleet judge for parallel AI coding sessions. CLI works out of the box so sessions orient around each other; optional sage judge run turns answers into a living AI judge.">
 
   <!-- ▸ SITE URL — sage.muslewski.com (custom domain on Vercel) -->
@@ -43,16 +44,33 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style id="variant-v15-css">
+    /* exploration variant chrome */
+    .imagine-band img { image-rendering: auto; }
+    body.variant-manuscript .imagine-plate img { background:#0E0D0C; }
+    
+    body.variant-manuscript #the-judge {
+      background: linear-gradient(180deg, #0E0D0C 0%, #1a1610 40%, #0E0D0C 100%);
+    }
+    body.variant-manuscript #what-sage-is {
+      /* keep dark; cream lives in the art */
+    }
+    
+    
+  </style>
 </head>
-<body>
+<body class="variant-manuscript">
 
 <!-- ════════════════════════════ NAV (v8 backdrop-blur + paper texture) ════════════════════════════ -->
-<nav class="paper-tex nav-paper" style="position:sticky;top:0;z-index:100;">
+<nav class="paper-tex nav-paper" style="position:sticky;top:0;z-index:100;background:rgba(14,13,12,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #1C1A16;">
   <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:13px clamp(16px,4vw,28px);display:flex;align-items:center;justify-content:space-between;gap:12px;">
     <div style="display:flex;align-items:center;gap:14px;min-width:0;">
       <img src="/favicon.svg" alt="" width="30" height="30" style="display:block;flex-shrink:0;filter:drop-shadow(0 0 9px rgba(200,151,47,0.32));">
       <span style="font-family:Anton,sans-serif;font-size:26px;color:#C8972F;letter-spacing:0.12em;text-shadow:0 0 10px rgba(200,151,47,0.3);">SAGE</span>
       <span class="nav-tag" style="font-size:10px;color:#2E2A22;letter-spacing:0.10em;font-family:'JetBrains Mono',monospace;white-space:nowrap;">// fleet judge</span>
+      <span style="font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;color:#C8972F;border:1px solid #C8972F55;padding:3px 9px;border-radius:999px;white-space:nowrap;background:rgba(200,151,47,0.08);">imagine · manuscript</span>
+      <a href="/explorations/" style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#6A6058;text-decoration:none;letter-spacing:0.06em;white-space:nowrap;">← explorations</a>
     </div>
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end;">
       <a href="/docs/" class="nav-demo" title="Product documentation" aria-label="Open SAGE documentation" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C8972F;text-decoration:none;letter-spacing:0.04em;white-space:nowrap;">Docs</a>
@@ -64,14 +82,13 @@
 </nav>
 
 
-<div class="amb-band amb-shafts amb-hero">
 <!-- ════════════════════════════ HERO — v6 left (vertically centered) + v7 terminal ════════════════════════════ -->
 <section style="padding:clamp(72px,8vw,110px) 24px;max-width:1160px;margin:0 auto;">
   <div class="hero-grid">
 
     <!-- LEFT: identity + CTAs (v6, mono) — vertically centered to match terminal -->
     <div style="font-family:'JetBrains Mono',monospace;align-self:center;">
-      <div class="hi hi-1 badge" style="margin-bottom:22px;"><span class="orn-spark" aria-hidden="true"></span>Open Source · Zero Dependencies</div>
+      <div class="hi hi-1 badge" style="margin-bottom:22px;">Open Source · Zero Dependencies</div>
       <div class="hi hi-2 wordmark">SAGE</div>
       <div class="hi hi-3" style="font-size:10px;color:#3A3428;letter-spacing:0.18em;text-transform:uppercase;margin-top:7px;margin-bottom:26px;">Session Awareness &amp; Guidance Engine</div>
 
@@ -130,11 +147,22 @@
   </div>
 </section>
 
+
+<!-- ═══ IMAGINE full-bleed band ═══ -->
+<section class="imagine-band reveal" aria-label="Imagine art band" style="position:relative;margin:0;padding:0;max-width:none;border-top:1px solid #1C1A16;border-bottom:1px solid #1C1A16;overflow:hidden;">
+  <div style="position:relative;max-height:min(52vh,520px);overflow:hidden;">
+    <img src="/assets/imagine/c-hero-manuscript.jpg" alt="" width="1280" height="720" style="width:100%;height:min(52vh,520px);object-fit:cover;object-position:center;display:block;filter:saturate(1.05) contrast(1.04);">
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,13,12,0.15) 0%,rgba(14,13,12,0.55) 70%,rgba(14,13,12,0.92) 100%);pointer-events:none;"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;padding:18px 24px 22px;max-width:1160px;margin:0 auto;">
+      <div style="font-family:'Caveat',cursive;font-size:22px;color:#C8972F;text-shadow:0 2px 12px rgba(0,0,0,0.8);">the sacred court of code</div>
+    </div>
+  </div>
+</section>
+
+
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-none">
 <!-- ════════════════════════════ THE PROBLEM (v8 — cinematic statement + error terminal) ════════════════════════════ -->
 <section id="problem" style="padding:clamp(72px,8vw,120px) 24px;max-width:1200px;margin:0 auto;">
   <div class="g2-start" style="gap:clamp(40px,6vw,72px);">
@@ -179,18 +207,21 @@
     </div>
 
   </div>
+
+  <div class="reveal reveal-d2" style="margin-top:clamp(36px,5vw,56px);max-width:1000px;margin-left:auto;margin-right:auto;">
+    
+  <div class="reveal reveal-d2 plate-ink paper-tex frame-paper imagine-plate" style="position:relative;transform:rotate(-0.8deg);width:100%;box-shadow:8px 12px 0 rgba(200,151,47,0.18),0 28px 70px rgba(0,0,0,0.65);border:1px solid #2A261E;border-radius:4px;overflow:hidden;margin:0 0 8px;">
+    <img src="/assets/imagine/a-problem-fleetmap.jpg" alt="SAGE — Illuminated Manuscript problem art" width="1280" height="720" loading="lazy" style="width:100%;height:auto;display:block;">
+    <p class="plate-cap" style="font-size:15px;margin:0;padding:10px 14px;background:rgba(14,13,12,0.92);border-top:1px solid #2A261E;color:#A89E92;font-family:'Caveat',cursive;font-size:18px;">the chaos before the court</p>
+  </div>
+  </div>
 </section>
 
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-dust">
-
-<div class="orn-divider-wrap" aria-hidden="true" data-orn-for="<!-- ════════════════════════════ WHAT S">
-  <img class="orn-divider" src="/assets/imagine/ornaments/divider.jpg" width="1280" height="720" alt="">
-</div>
 <!-- ════════════════════════════ WHAT SAGE IS (v7 — enlarged mascot + editorial) ════════════════════════════ -->
+<div style="background:#1A1714;">
 <section id="what-sage-is" style="padding:clamp(72px,9vw,130px) 24px;max-width:1160px;margin:0 auto;">
 
   <span class="sec-cav reveal">// what sage is —</span>
@@ -232,24 +263,19 @@
     <!-- Right: square mascot — enlarged (speech bubble removed) -->
     <div class="reveal reveal-d2" style="flex:1;min-width:260px;display:flex;justify-content:center;align-items:flex-start;">
       <div class="paper-tex frame-paper" style="position:relative;width:100%;max-width:500px;border:2px solid #C8972F;border-radius:4px;overflow:hidden;box-shadow:6px 8px 0 rgba(200,151,47,0.15),0 24px 50px rgba(0,0,0,0.6);">
-        <picture>
-          <source srcset="/assets/sage-square.avif" type="image/avif">
-          <source srcset="/assets/sage-square.webp" type="image/webp">
-          <img src="/assets/sage-square.webp" width="1000" height="1000"
-               alt="SAGE mascot — robed sage with sunglasses and staff"
+        <img src="/assets/imagine/c-hero-manuscript.jpg" width="1000" height="1000"
+               alt="SAGE — Illuminated Manuscript character plate"
                style="display:block;width:100%;height:auto;">
-        </picture>
       </div>
     </div>
 
   </div>
 </section>
+</div>
 
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-none">
 <!-- ════════════════════════════ HOW IT WORKS (v6 — steps terminal + wide sage-setup.png) ════════════════════════════ -->
 <section style="padding:clamp(60px,7vw,100px) 24px;max-width:1160px;margin:0 auto;" class="reveal">
   <div class="sec-label">// how it works</div>
@@ -331,13 +357,9 @@
 
     <!-- sage-setup.png — WIDE (right, larger column) + paper texture -->
     <div class="paper-tex frame-paper" style="position:relative;border-radius:6px;border:1px solid #222018;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.3),0 16px 48px rgba(0,0,0,0.55);">
-      <picture>
-        <source srcset="/assets/sage-setup.avif" type="image/avif">
-        <source srcset="/assets/sage-setup.webp" type="image/webp">
-        <img src="/assets/sage-setup.webp" width="1440" height="720"
-             alt="SAGE easy setup: three steps — Install (npm install -g agentic-sage), Wire (sage init), Enable (sage on)"
-             style="display:block;width:100%;height:auto;opacity:0.92;">
-      </picture>
+      <img src="/assets/imagine/c-setup-manuscript.jpg" width="1440" height="720"
+             alt="SAGE setup — Illuminated Manuscript"
+             style="display:block;width:100%;height:auto;opacity:0.96;">
     </div>
   </div>
 </section>
@@ -345,14 +367,12 @@
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-shafts">
 <!-- ════════════════════════════ TWO LAYERS — CLI out of the box + live judge (NEW) ════════════════════════════ -->
 <section id="two-layers" style="padding:clamp(72px,9vw,130px) 24px;max-width:1160px;margin:0 auto;">
 
   <div class="reveal" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:18px;">
     <div class="sec-label" style="margin-bottom:0;">// session communication</div>
-    <span class="badge" style="background:rgba(255,105,180,0.12);color:#FF8DC7;border:1px solid rgba(255,105,180,0.28);letter-spacing:0.12em;"><span class="orn-spark" aria-hidden="true"></span>NEW · live judge</span>
+    <span class="badge" style="background:rgba(255,105,180,0.12);color:#FF8DC7;border:1px solid rgba(255,105,180,0.28);letter-spacing:0.12em;">NEW · live judge</span>
   </div>
 
   <h2 class="reveal reveal-d1" style="font-family:Anton,sans-serif;font-size:clamp(28px,5vw,56px);color:#EFE7D8;line-height:1.05;letter-spacing:0.02em;margin-bottom:18px;">
@@ -446,6 +466,14 @@
     </div>
   </div>
 
+  <div class="reveal reveal-d2" style="margin-top:clamp(28px,4vw,40px);max-width:920px;margin-left:auto;margin-right:auto;">
+    
+  <div class="reveal reveal-d2 plate-ink paper-tex frame-paper imagine-plate" style="position:relative;transform:rotate(0.5deg);width:100%;box-shadow:8px 12px 0 rgba(200,151,47,0.18),0 28px 70px rgba(0,0,0,0.65);border:1px solid #2A261E;border-radius:4px;overflow:hidden;margin:0 0 8px;">
+    <img src="/assets/imagine/shared-living-judge.jpg" alt="SAGE living judge — Illuminated Manuscript" width="1280" height="720" loading="lazy" style="width:100%;height:auto;display:block;">
+    <p class="plate-cap" style="font-size:15px;margin:0;padding:10px 14px;background:rgba(14,13,12,0.92);border-top:1px solid #2A261E;color:#A89E92;font-family:'Caveat',cursive;font-size:18px;">sensor facts · living briefs</p>
+  </div>
+  </div>
+
   <div class="reveal reveal-d3 ann" style="font-size:20px;margin-top:22px;text-align:right;opacity:0.75;">↳ install once · elevate when the desk gets busy</div>
 
 </section>
@@ -453,12 +481,6 @@
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-dust">
-
-<div class="orn-divider-wrap" aria-hidden="true" data-orn-for="<!-- ════════════════════════════ SIX PI">
-  <img class="orn-divider" src="/assets/imagine/ornaments/divider.jpg" width="1280" height="720" alt="">
-</div>
 <!-- ════════════════════════════ SIX PILLARS (v9 layout — recolored v6 dark) ════════════════════════════ -->
 <section id="principles" style="padding:clamp(72px,9vw,112px) 0;">
 
@@ -535,8 +557,6 @@
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-none">
 <!-- ════════════════════════════ A PEEK (v7 — dual terminal panes + Caveat callout) ════════════════════════════ -->
 <section id="peek" style="padding:clamp(72px,9vw,130px) 24px;max-width:1160px;margin:0 auto;">
 
@@ -593,8 +613,6 @@
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-none">
 <!-- ════════════════════════════ THE JUDGE (v7 — banner plate centerpiece) ════════════════════════════ -->
 <section id="the-judge" style="padding:clamp(72px,9vw,130px) 24px;max-width:1000px;margin:0 auto;">
 
@@ -604,14 +622,8 @@
 
   <div class="reveal reveal-d1" style="display:flex;justify-content:center;">
     <div class="plate-ink paper-tex frame-paper" style="position:relative;transform:rotate(-1.2deg);width:100%;box-shadow:10px 14px 0 rgba(200,151,47,0.20),0 32px 80px rgba(0,0,0,0.7);">
-      <div class="orn-corners" aria-hidden="true"></div>
-      <img class="orn-seal" src="/assets/imagine/ornaments/seal.jpg" width="256" height="256" alt="" aria-hidden="true">
-      <picture>
-        <source srcset="/assets/sage-banner.avif" type="image/avif">
-        <source srcset="/assets/sage-banner.webp" type="image/webp">
-        <img src="/assets/sage-banner.webp" width="1600" height="800" alt="SAGE mascot — a robed sage with sunglasses and a staff, with the motto: I DON'T DO THE WORK. I JUDGE IT." style="width:100%;height:auto;display:block;">
-      </picture>
-      <p class="plate-cap" style="font-size:17px;">the sage sees all &nbsp;·&nbsp; the sage judges all</p>
+      <img src="/assets/imagine/c-hero-manuscript.jpg" width="1600" height="800" alt="SAGE — Illuminated Manuscript judge plate" style="width:100%;height:auto;display:block;">
+      <p class="plate-cap" style="font-size:17px;">illuminated · sworn to read · never to write</p>
     </div>
   </div>
 
@@ -620,12 +632,6 @@
 <hr class="divider">
 
 
-</div>
-<div class="amb-band amb-dust">
-
-<div class="orn-divider-wrap" aria-hidden="true" data-orn-for="<!-- ════════════════════════════ FINAL ">
-  <img class="orn-divider" src="/assets/imagine/ornaments/divider.jpg" width="1280" height="720" alt="">
-</div>
 <!-- ════════════════════════════ FINAL CTA (v7) ════════════════════════════ -->
 <section id="cta" style="padding:clamp(88px,11vw,150px) 24px;max-width:1160px;margin:0 auto;text-align:center;">
 
@@ -657,8 +663,6 @@
 </section>
 
 
-</div>
-<div class="amb-band amb-none">
 <!-- ════════════════════════════ CONTACT — the creator's note (handwritten plate, pinned askew) ════════════════════════════ -->
 <section id="contact" style="padding:clamp(56px,8vw,104px) 24px clamp(76px,10vw,128px);max-width:820px;margin:0 auto;">
   <div class="reveal">
@@ -687,7 +691,6 @@
   </div>
 </section>
 
-</div>
 <!-- ════════════════════════════ FOOTER (v9 — recolored v6 dark) ════════════════════════════ -->
 <footer style="background:#14110D;border-top:1px solid #1A1814;padding:28px 24px;">
   <div style="max-width:1160px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;">

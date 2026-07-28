@@ -81,18 +81,25 @@ body::before {
 
 /* ════ Terminal chrome (v6 tokens) ════ */
 .terminal {
-  background-color: rgba(10,9,8,0.97);
-  border: 1px solid #262014;
+  background-color: rgba(10, 9, 8, 0.72);
+  border: 1px solid rgba(38, 32, 20, 0.85);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.65), 0 0 0 1px rgba(200,151,47,0.06);
+  backdrop-filter: blur(9px) saturate(1.05);
+  -webkit-backdrop-filter: blur(9px) saturate(1.05);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.50),
+    0 0 0 1px rgba(200, 151, 47, 0.07),
+    inset 0 1px 0 rgba(239, 231, 216, 0.03);
 }
 .terminal-bar {
-  background: #161310;
-  border-bottom: 1px solid #252018;
+  background: rgba(22, 19, 16, 0.72);
+  border-bottom: 1px solid rgba(37, 32, 24, 0.75);
   padding: 10px 14px;
   display: flex; align-items: center; gap: 7px;
   user-select: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .dot   { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
 .dot-r { background:#FF5F57; }
@@ -134,13 +141,21 @@ body::before {
 
 /* ════ Copy block ════ */
 .copy-block {
-  background: #0E0C0A; border: 1px solid #222018; border-radius: 4px;
+  background: rgba(14, 12, 10, 0.70);
+  border: 1px solid rgba(34, 32, 24, 0.85);
+  border-radius: 4px;
   padding: 12px 16px; display: flex; align-items: center; gap: 10px;
-  cursor: pointer; transition: border-color 0.2s; font-size: 12px;
+  cursor: pointer; transition: border-color 0.2s, background 0.2s; font-size: 12px;
   font-family: 'JetBrains Mono', monospace;
   white-space: nowrap; overflow-x: auto;
+  backdrop-filter: blur(7px) saturate(1.05);
+  -webkit-backdrop-filter: blur(7px) saturate(1.05);
+  box-shadow: inset 0 1px 0 rgba(239, 231, 216, 0.025);
 }
-.copy-block:hover { border-color: rgba(200,151,47,0.25); }
+.copy-block:hover {
+  border-color: rgba(200, 151, 47, 0.28);
+  background: rgba(18, 15, 12, 0.80);
+}
 .copy-block.copied { border-color: #6B7A3A; }
 .copy-icon { color: #3A3428; font-size: 13px; flex-shrink: 0; transition: color 0.2s; }
 .copy-block.copied .copy-icon { color: #6B7A3A; }
@@ -221,17 +236,24 @@ body::before {
 
 /* ════ Pillar card (v9 layout, recolored v6 dark) ════ */
 .pillar-card {
-  background: #14110D;
-  border: 1px solid #252018;
+  background: rgba(20, 17, 13, 0.68);
+  border: 1px solid rgba(37, 32, 24, 0.8);
   padding: 20px 18px;
   border-radius: 4px;
-  box-shadow: 3px 3px 0 rgba(200,151,47,0.10);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  box-shadow:
+    3px 3px 0 rgba(200, 151, 47, 0.09),
+    inset 0 1px 0 rgba(239, 231, 216, 0.03);
+  backdrop-filter: blur(8px) saturate(1.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.05);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 .pillar-card:hover {
   transform: translate(-1px,-1px);
-  border-color: rgba(200,151,47,0.28);
-  box-shadow: 5px 5px 0 rgba(200,151,47,0.16);
+  border-color: rgba(200, 151, 47, 0.30);
+  background: rgba(24, 20, 15, 0.78);
+  box-shadow:
+    5px 5px 0 rgba(200, 151, 47, 0.14),
+    inset 0 1px 0 rgba(239, 231, 216, 0.04);
 }
 
 /* ════ Step card (v6 'how it works' uses terminal — no extra needed) ════ */
@@ -355,3 +377,126 @@ body::before {
 .install-tab[aria-selected="true"] { color:#EFE7D8; border-bottom-color:#6B7A3A; }
 .install-tab:focus-visible { outline:1px solid rgba(200,151,47,0.5); outline-offset:2px; }
 .install-panel[hidden] { display:none; }
+
+
+/* ════ Ambient bands (v19 winner — section atmosphere) ════ */
+:root { --nav-overlap: 4.5rem; }
+.amb-band { position: relative; isolation: isolate; }
+.amb-band > * { position: relative; z-index: 1; }
+.amb-band::before,
+.amb-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+.amb-band::before {
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+}
+.amb-band.amb-shafts::before {
+  background-image: url('/assets/imagine/ambient/bg-shafts.jpg');
+  mix-blend-mode: screen;
+  opacity: 0.26;
+}
+.amb-band.amb-shafts::after {
+  background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(200,151,47,0.07) 0%, transparent 55%);
+  opacity: 1;
+}
+.amb-band.amb-none::before,
+.amb-band.amb-none::after { display: none; }
+.amb-band.amb-dust::before {
+  background-image: url('/assets/imagine/ambient/bg-dust.jpg');
+  mix-blend-mode: screen;
+  opacity: 0.30;
+}
+.amb-band.amb-dust::after {
+  background-image: url('/assets/imagine/ambient/tex-paper.jpg');
+  background-size: 420px 420px;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.12;
+}
+/* hero shafts pull under sticky nav */
+.amb-band.amb-hero.amb-shafts {
+  margin-top: calc(-1 * var(--nav-overlap));
+  padding-top: var(--nav-overlap);
+}
+.amb-band.amb-hero.amb-shafts::after {
+  background: radial-gradient(ellipse 95% 75% at 50% 0%, rgba(200,151,47,0.09) 0%, transparent 58%);
+}
+.amb-band > hr.divider { position: relative; z-index: 1; margin: 0; }
+
+/* glass nav (inline styles on nav still set blur; this is the source of truth) */
+nav.nav-paper {
+  background: rgba(14, 13, 12, 0.72);
+  backdrop-filter: blur(9px) saturate(1.08);
+  -webkit-backdrop-filter: blur(9px) saturate(1.08);
+  border-bottom: 1px solid rgba(28, 26, 22, 0.75);
+}
+
+/* Imagine ornaments (non-background accents) */
+.orn-divider {
+  display: block;
+  width: min(520px, 78%);
+  max-height: 56px;
+  object-fit: cover;
+  object-position: center;
+  margin: 0 auto;
+  opacity: 0.85;
+  pointer-events: none;
+  user-select: none;
+  mix-blend-mode: screen;
+}
+.orn-divider-wrap {
+  position: relative;
+  z-index: 1;
+  padding: 18px 24px 0;
+  text-align: center;
+}
+.plate-ink { position: relative; }
+.orn-seal {
+  position: absolute;
+  right: 14px;
+  bottom: 40px;
+  width: clamp(52px, 8vw, 72px);
+  height: auto;
+  opacity: 0.88;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.45));
+  z-index: 2;
+  mix-blend-mode: screen;
+  border-radius: 50%;
+}
+.orn-corners {
+  position: absolute;
+  inset: 6px;
+  background: url('/assets/imagine/ornaments/corners.jpg') center / 100% 100% no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: screen;
+}
+/* tiny gold seal as spark accent (glyph sheet was too noisy for 14px) */
+.orn-spark {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  vertical-align: -2px;
+  margin-right: 7px;
+  background: url('/assets/imagine/ornaments/seal.jpg') center / cover no-repeat;
+  border-radius: 50%;
+  opacity: 0.9;
+  box-shadow: 0 0 8px rgba(200, 151, 47, 0.25);
+}
+.badge .orn-spark { margin-right: 8px; }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .terminal { background-color: rgba(10, 9, 8, 0.92); }
+  .pillar-card { background: rgba(20, 17, 13, 0.92); }
+  .copy-block { background: rgba(14, 12, 10, 0.92); }
+  nav.nav-paper { background: rgba(14, 13, 12, 0.94); }
+}

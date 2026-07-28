@@ -16,13 +16,13 @@
     "atlas:doctor": "atlas doctor",
     "atlas:wire": "atlas wire all",
     "mind:check": "atlas check",
-    "mind:build": "atlas build",
-    "//sage-gate": "global only — sage gate (preferred judge) is machine-level; not chained into predev. run: sage gate"
+    "mind:build": "atlas build"
   },
   "devDependencies": {
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",
-    "memory-atlas": "0.5.3",
+    "memory-atlas": "^0.5.3",
     "vite": "^6.0.7"
-  }
+  },
+  "//sage-gate": "global only — sage gate (preferred judge) is machine-level; not chained into predev. run: sage gate"
 }

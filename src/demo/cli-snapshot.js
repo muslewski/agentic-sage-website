@@ -3,7 +3,7 @@
 // reads from the in-browser Scenario instead of the filesystem. Keep COMMANDS'
 // names in lockstep with the real USAGE (the dev drift plugin enforces this).
 
-export const SOURCE_COMMIT = 'fe741b3'
+export const SOURCE_COMMIT = 'de4a540'
 
 const pad = (s, n) => String(s ?? '').padEnd(n).slice(0, n)
 const live = (sc) => sc.sessions.filter((s) => s.liveness !== 'closed' && s.liveness !== 'dead')
@@ -168,6 +168,163 @@ function renderStatusline(_args, _sc) {
   return '(statusline is empty unless a session is consulting SAGE)'
 }
 
+// ── war ──  (mirror lib/warfaces.mjs — simplified fleet cockpit for demo)
+function renderWar(_args, sc) {
+  const liveN = live(sc).length
+  const head = `SAGE war · fleet cockpit · ${sc.repos.length} repo(s) · ${liveN} live session(s)`
+  const rows = sc.repos.map((r) => `  ${pad(r.repoId, 18)} ${pad(`${r.sessions} session(s)`, 14)} ${r.last}`)
+  return [head, '', ...rows, '', '  ? help · X clear dead  (demo — keys are inert)'].join('\n')
+}
+
+// ── prune ──
+function renderPrune(args, sc) {
+  const days = (() => {
+    const i = args.indexOf('--days')
+    return i >= 0 && args[i + 1] ? Number(args[i + 1]) || 7 : 7
+  })()
+  const dead = sc.sessions.filter((s) => s.liveness === 'dead' || s.liveness === 'closed')
+  const yes = args.includes('--yes')
+  if (!dead.length) return `SAGE prune · no closed/dead sessions older than ${days}d`
+  if (!yes) {
+    return [
+      `SAGE prune · would remove ${dead.length} closed/dead session(s) older than ${days}d`,
+      ...dead.map((s) => `  · ${s.branch || s.session_id}  (${s.liveness})`),
+      '  re-run with --yes to confirm (demo — nothing is deleted)',
+    ].join('\n')
+  }
+  return `sage: pruned ${dead.length} closed/dead session(s) (demo — scenario unchanged)`
+}
+
+// ── init / where / enable / disable / gate ──
+function renderInit(args, _sc) {
+  if (args.includes('--show')) {
+    return [
+      'SAGE init — show',
+      '  global:  wired (skills + hooks)',
+      '  project: none',
+      '  state:   ready — sage on to enable',
+    ].join('\n')
+  }
+  if (args.includes('--repair') || args.includes('--global') || args.includes('--project')) {
+    return 'sage: init complete (demo — nothing written to disk)'
+  }
+  return [
+    'SAGE init — wizard (demo)',
+    '  [1] global wire  ·  [2] project wire  ·  [3] repair  ·  [4] show',
+    '  tip: sage init --global | --project | --repair | --show',
+  ].join('\n')
+}
+
+function renderWhere(_args, sc) {
+  return [
+    `SAGE where · ${sc.repoId}`,
+    `  scope:    product`,
+    `  storage:  ~/.sage/repos/${sc.repoId}/`,
+    `  cwd:      ${sc.cwd}`,
+    `  enabled:  ${sc.enabled ? 'yes (global on)' : 'no (sage on to enable)'}`,
+    `  rule:     default product match`,
+  ].join('\n')
+}
+
+function renderEnable(_args, sc) {
+  return `sage: repo ${sc.repoId} enable override → ON (independent of global on/off)`
+}
+function renderDisable(_args, sc) {
+  return `sage: repo ${sc.repoId} enable override → OFF (independent of global on/off)`
+}
+
+function renderGate(args, sc) {
+  const strict = args.includes('--strict')
+  return [
+    `SAGE gate${strict ? ' --strict' : ''}`,
+    '  ✓ install freshness — current',
+    '  ✓ preferred judge   — offline-ok (demo)',
+    `  ✓ repo              — ${sc.repoId}`,
+    '  all soft checks passed',
+  ].join('\n')
+}
+
+// ── telemetry ──
+function renderTelemetry(args, _sc) {
+  const sub = args[0] || 'status'
+  if (sub === 'on') return 'sage telemetry: ON (local debug — demo)'
+  if (sub === 'off') return 'sage telemetry: OFF (default)'
+  if (sub === 'clear') return 'sage telemetry: cleared (demo — nothing on disk)'
+  if (sub === 'dump' || sub === 'report') {
+    return ['SAGE telemetry · report', '  events: 0  (demo store empty)', '  status: off'].join('\n')
+  }
+  return ['SAGE telemetry · status', '  enabled: off (default)', '  store:   (empty — demo)'].join('\n')
+}
+
+// ── judge ──  (live-judge surface; demo is read-only narrative)
+function renderJudge(args, sc) {
+  const sub = args[0]
+  if (!sub) {
+    return [
+      'usage: sage judge <on|off|status|show|publish|run> …',
+      '  on --fleet|--repo [--takeover]   register THIS session as live judge',
+      '  off                             clear judge role',
+      '  status                          live judges + brief ages',
+      '  show [--fleet|--repo]           print fresh brief text',
+      '  publish                         stdin JSON → brief (skill loop)',
+      '  run [--auto|--fleet|--repo] …   start live judge (easy path)',
+    ].join('\n')
+  }
+  if (sub === 'status') {
+    return [
+      `SAGE judge · status · ${sc.repoId}`,
+      '  (no live judge registered — demo)',
+      '  tip: sage judge run --auto',
+    ].join('\n')
+  }
+  if (sub === 'show') {
+    return `SAGE judge · show\n  (no fresh brief — register a judge first)`
+  }
+  if (sub === 'on') {
+    const scope = args.includes('--fleet') ? 'fleet' : args.includes('--repo') ? 'repo' : 'repo'
+    return `sage: this session registered as live judge (${scope})${args.includes('--takeover') ? ' · takeover' : ''} (demo)`
+  }
+  if (sub === 'off') return 'sage: judge role cleared; own brief marked stale (demo)'
+  if (sub === 'publish') return 'sage: brief published (demo — no disk write)'
+  if (sub === 'run') {
+    return [
+      'SAGE judge run · demo',
+      '  scope:   auto',
+      '  harness: none (demo cannot spawn a real judge pane)',
+      '  tip:     in a real desk, `sage judge run --auto` starts the live judge',
+    ].join('\n')
+  }
+  return `sage judge: unknown subcommand "${sub}" — try status | show | run | on | off`
+}
+
+// ── about ──  (ferry tmux facts)
+function renderAbout(args, sc) {
+  const i = args.indexOf('--tmux')
+  const sess = i >= 0 ? args[i + 1] : null
+  if (!sess) return 'usage: sage about --tmux <session> [--json]'
+  const self = sc.sessions.find((s) => s.session_id === sc.self) || sc.sessions[0]
+  if (args.includes('--json')) {
+    return JSON.stringify(
+      {
+        tmux: sess,
+        repoId: sc.repoId,
+        branch: self?.branch || null,
+        liveness: self?.liveness || 'unknown',
+        judge: null,
+      },
+      null,
+      2,
+    )
+  }
+  return [
+    `SAGE about · tmux ${sess}`,
+    `  repo:     ${sc.repoId}`,
+    `  branch:   ${self?.branch || '—'}`,
+    `  liveness: ${self?.liveness || '—'}`,
+    `  judge:    (none — demo)`,
+  ].join('\n')
+}
+
 // ── mutating confirmations (engine applies the state change; these print) ──
 const onRender = (_a, sc) => `sage: SAGE is now ${sc.enabled ? 'ON (judging enabled globally)' : 'OFF (judging frozen)'}`
 const claimRender = (args, sc) => (args.length ? `sage: ${sc.self} claimed ${args.join(' ')}` : 'usage: sage claim <glob> [glob…]')
@@ -186,15 +343,25 @@ export const APHORISMS = [
 
 export const COMMANDS = [
   { name: 'board', usage: 'sage board', summary: "roster of this repo's sessions", mutating: false, render: renderBoard },
+  { name: 'war', usage: 'sage war', summary: 'live cross-repo fleet cockpit', mutating: false, render: renderWar },
   { name: 'fleet', usage: 'sage fleet', summary: 'one-line nearest-neighbour summary', mutating: false, render: renderFleet },
   { name: 'territory', usage: 'sage territory <glob…>', summary: 'who else claims/touches these paths', mutating: false, render: renderTerritory },
   { name: 'why-diverged', usage: 'sage why-diverged <file>', summary: 'which sessions touch a file + why', mutating: false, render: renderWhyDiverged },
   { name: 'merge-brief', usage: 'sage merge-brief', summary: 'all contested paths before you merge', mutating: false, render: renderMergeBrief },
   { name: 'repos', usage: 'sage repos', summary: 'list all judged repos', mutating: false, render: renderRepos },
+  { name: 'prune', usage: 'sage prune [--days N] [--yes]', summary: 'remove old closed/dead sessions', mutating: false, render: renderPrune },
   { name: 'backlog', usage: 'sage backlog', summary: 'rows × live sessions', mutating: true, render: renderBacklog },
   { name: 'doctor', usage: 'sage doctor', summary: 'validate dirs / hook / settings', mutating: false, render: renderDoctor },
+  { name: 'gate', usage: 'sage gate [--strict]', summary: 'soft install freshness + judge warn', mutating: false, render: renderGate },
   { name: 'guard', usage: 'sage guard …', summary: 'list | add | rm | on | off', mutating: true, render: renderGuard },
   { name: 'statusline', usage: 'sage statusline', summary: 'the "Asking Sage" status segment', mutating: false, render: renderStatusline },
+  { name: 'telemetry', usage: 'sage telemetry …', summary: 'status|report|dump|clear|on|off', mutating: false, render: renderTelemetry },
+  { name: 'judge', usage: 'sage judge …', summary: 'live judge: on|off|status|show|run…', mutating: false, render: renderJudge },
+  { name: 'about', usage: 'sage about --tmux <session>', summary: 'facts + judge line for a tmux session', mutating: false, render: renderAbout },
+  { name: 'init', usage: 'sage init', summary: 'wire skills + hooks (wizard / flags)', mutating: false, render: renderInit },
+  { name: 'where', usage: 'sage where', summary: "this repo's scope, storage, matched rule", mutating: false, render: renderWhere },
+  { name: 'enable', usage: 'sage enable', summary: 'per-repo enable override ON', mutating: false, render: renderEnable },
+  { name: 'disable', usage: 'sage disable', summary: 'per-repo enable override OFF', mutating: false, render: renderDisable },
   { name: 'on', usage: 'sage on', summary: 'enable SAGE globally', mutating: true, render: onRender },
   { name: 'off', usage: 'sage off', summary: 'disable SAGE globally', mutating: true, render: onRender },
   { name: 'link', usage: 'sage link <sid> [state]', summary: 'manual link_state override', mutating: true, render: linkRender },
